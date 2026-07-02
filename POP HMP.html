@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POP-HMP-QUAL-001 · Visita de Qualidade à Beira do Leito</title>
+<style>
+  :root{
+    --azul-hmp:#1F4E79; --azul-medio:#2E75B6; --azul-claro:#D9E2F3;
+    --verde-re:#548235; --verde-claro:#C5E0B4; --cinza-txt:#595959;
+    --vermelho:#C00000; --vermelho-claro:#F8D7D5; --cinza-na:#808080; --cinza-na-claro:#E7E7E7;
+    --borda:#D0D7E2; --bg:#EEF2F7; --branco:#FFFFFF; --amarelo:#B8860B;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);color:#1a1a1a;font-size:15px;line-height:1.45;padding-bottom:78px;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 12px 12px;}
+
+  header.inst{background:linear-gradient(135deg,var(--azul-hmp) 0%,var(--azul-medio) 100%);
+    color:#fff;border-radius:0 0 14px 14px;padding:14px 16px;box-shadow:0 4px 14px rgba(31,78,121,.20);}
+  .inst-in{max-width:920px;margin:0 auto;}
+  .inst-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .brand{font-weight:700;font-size:14.5px;}
+  .brand small{display:block;font-weight:400;opacity:.92;font-size:11.5px;margin-top:2px;}
+  .heart{color:var(--verde-claro);}
+  .selo{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:8px;
+    padding:5px 9px;font-size:10.5px;text-align:right;line-height:1.55;white-space:nowrap;}
+  .selo b{font-size:11.5px;}
+  h1{font-size:18px;margin:11px 0 2px;}
+  .subtitle{font-size:12px;opacity:.92;font-style:italic;margin:0;}
+
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-bottom:2px;}
+  .tab{flex:1 1 auto;text-align:center;border:1px solid var(--borda);background:#fff;color:var(--cinza-txt);
+    border-radius:20px;padding:9px 12px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .tab.active{background:var(--azul-hmp);border-color:var(--azul-hmp);color:#fff;box-shadow:0 2px 7px rgba(31,78,121,.25);}
+  .tab .stepno{opacity:.65;margin-right:5px;}
+
+  .page{display:none;} .page.active{display:block;}
+
+  .card{background:var(--branco);border:1px solid var(--borda);border-radius:13px;
+    padding:15px 16px;margin-top:13px;box-shadow:0 1px 2px rgba(31,78,121,.04),0 6px 18px rgba(31,78,121,.05);}
+  .card h2{font-size:14px;margin:0 0 12px;color:var(--azul-hmp);text-transform:uppercase;
+    letter-spacing:.5px;border-bottom:2px solid var(--azul-claro);padding-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .card h3{font-size:13px;color:var(--azul-hmp);margin:16px 0 8px;font-weight:700;border-left:3px solid var(--verde-re);padding-left:9px;line-height:1.3;}
+  .blocktag{background:var(--azul-hmp);color:#fff;font-weight:700;border-radius:6px;min-width:24px;height:24px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:13px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* corpo POP */
+  .doc p{margin:0 0 10px;text-align:justify;}
+  .doc ul,.doc ol{margin:0 0 10px;padding-left:20px;} .doc li{margin-bottom:6px;}
+  .doc-table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0 12px;}
+  .doc-table th,.doc-table td{border:1px solid var(--borda);padding:7px 9px;text-align:left;vertical-align:top;}
+  .doc-table th{background:var(--azul-claro);color:var(--azul-hmp);font-size:12px;text-transform:uppercase;}
+  .doc-table td.k{font-weight:700;color:var(--azul-hmp);}
+  .valida{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;}
+  .valida .vbox{border:1px solid var(--borda);border-radius:9px;padding:12px;text-align:center;}
+  .valida .role{font-size:11px;text-transform:uppercase;color:var(--cinza-txt);font-weight:700;}
+  .valida .nome{font-weight:700;margin-top:22px;border-top:1px solid #999;padding-top:5px;font-size:13px;}
+  .valida .cargo{font-size:11px;color:var(--cinza-txt);}
+
+  /* campos */
+  .id-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 12px;}
+  .field label{display:block;font-size:11px;font-weight:700;color:var(--cinza-txt);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px;}
+  .field input,.field select,textarea{width:100%;padding:10px;border:1px solid var(--borda);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:#1a1a1a;}
+  .field input:focus,.field select:focus,textarea:focus{outline:2px solid var(--azul-medio);border-color:var(--azul-medio);}
+  textarea{min-height:64px;resize:vertical;}
+
+  /* chips de setor */
+  .setor-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:4px;}
+  .schip{border:1.5px solid var(--borda);background:#fff;border-radius:10px;padding:11px 12px;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .schip:hover{border-color:var(--azul-medio);}
+  .schip.active{border-color:var(--azul-hmp);background:var(--azul-claro);}
+  .schip .snome{font-weight:700;color:var(--azul-hmp);font-size:14px;}
+  .schip .sprog{font-size:11px;color:var(--cinza-txt);font-weight:600;margin-top:2px;}
+  .schip .sbadge{font-size:12px;font-weight:800;border-radius:20px;padding:3px 9px;background:var(--cinza-na-claro);color:var(--cinza-txt);white-space:nowrap;}
+  .schip.done .sbadge{background:var(--verde-re);color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* contexto do leito (sticky) */
+  .leito-ctx{position:sticky;top:0;z-index:22;background:linear-gradient(135deg,var(--azul-hmp),var(--azul-medio));
+    color:#fff;border-radius:12px;padding:11px 14px;margin-top:12px;box-shadow:0 3px 10px rgba(31,78,121,.18);}
+  .leito-ctx .lc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .leito-ctx .lc-setor{font-size:12px;opacity:.9;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .leito-ctx .lc-leito{font-size:20px;font-weight:800;line-height:1.1;}
+  .leito-ctx .lc-mini{font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border-radius:8px;padding:5px 9px;text-align:center;}
+  .pbar{height:6px;background:rgba(255,255,255,.25);border-radius:6px;margin-top:9px;overflow:hidden;}
+  .pbar > i{display:block;height:100%;background:var(--verde-claro);border-radius:6px;transition:width .2s;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* dashboard leito */
+  .ldash{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;text-align:center;margin-top:10px;}
+  .stat{border-radius:9px;padding:8px 3px;background:var(--azul-claro);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .stat .num{font-size:19px;font-weight:800;line-height:1;color:var(--azul-hmp);}
+  .stat .lbl{font-size:9.5px;text-transform:uppercase;color:var(--cinza-txt);margin-top:3px;font-weight:700;}
+  .stat.conf{background:var(--verde-claro);} .stat.conf .num{color:var(--verde-re);}
+  .stat.nc{background:var(--vermelho-claro);} .stat.nc .num{color:var(--vermelho);}
+  .stat.pct{background:#fff;border:2px solid var(--borda);}
+  .stat.pct.ok{border-color:var(--verde-re);background:var(--verde-claro);} .stat.pct.ok .num{color:var(--verde-re);}
+  .stat.pct.nok{border-color:var(--vermelho);background:var(--vermelho-claro);} .stat.pct.nok .num{color:var(--vermelho);}
+
+  /* itens */
+  .item{padding:12px 0;border-bottom:1px dashed var(--borda);scroll-margin-top:98px;}
+  .item:last-child{border-bottom:none;}
+  .item-txt{font-size:14.5px;margin-bottom:9px;display:block;}
+  .item-txt .n{color:var(--azul-medio);font-weight:700;margin-right:5px;}
+  .opts{display:flex;gap:8px;}
+  .opt{flex:1;border:1.5px solid var(--borda);background:#fff;border-radius:9px;padding:11px 6px;font-size:14px;
+    font-weight:700;cursor:pointer;color:var(--cinza-txt);text-align:center;min-height:44px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .opt:active{transform:scale(.97);}
+  .opt.sel-c{background:var(--verde-re);border-color:var(--verde-re);color:#fff;}
+  .opt.sel-nc{background:var(--vermelho);border-color:var(--vermelho);color:#fff;}
+  .opt.sel-na{background:var(--cinza-na);border-color:var(--cinza-na);color:#fff;}
+  .obs{margin-top:9px;display:none;} .obs.show{display:block;}
+  .obs input{width:100%;padding:9px 10px;border:1px solid var(--vermelho);border-radius:8px;font-size:13.5px;font-family:inherit;background:#FFF9F9;}
+  .obs label{font-size:11px;font-weight:700;color:var(--vermelho);display:block;margin-bottom:4px;}
+  .obs.req input{box-shadow:0 0 0 3px rgba(198,40,40,.16);background:#FFF1F1;}
+  .obs.req label::after{content:" *";}
+  .item.flash{animation:flashItem 1.6s ease;}
+  @keyframes flashItem{0%,100%{background:transparent;}18%,55%{background:#FFF1F1;box-shadow:0 0 0 2px rgba(198,40,40,.22);border-radius:9px;}}
+
+  /* navegacao do leito */
+  .leito-nav{display:flex;gap:9px;margin-top:14px;}
+  .btn{border:none;border-radius:10px;padding:13px 16px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;}
+  .btn-prev{background:var(--azul-claro);color:var(--azul-hmp);flex:0 0 auto;padding:13px 16px;}
+  .btn-prev:disabled{opacity:.4;}
+  .btn-next{background:var(--verde-re);color:#fff;flex:1;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .btn-next.plain{background:var(--azul-hmp);}
+  .btn-ghost{background:#fff;border:1.5px solid var(--borda);color:var(--cinza-txt);}
+
+  .vago-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#FAFBFD;border:1px solid var(--borda);border-radius:10px;padding:10px 12px;margin-top:10px;}
+  .vago-row label{font-size:13px;font-weight:600;color:var(--cinza-txt);}
+  .switch{position:relative;width:46px;height:26px;flex:0 0 auto;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;background:#ccc;border-radius:26px;transition:.2s;cursor:pointer;}
+  .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+  .switch input:checked + .slider{background:var(--amarelo);}
+  .switch input:checked + .slider:before{transform:translateX(20px);}
+
+  .vago-panel{background:#FFF8E7;border:1px solid #E8D08A;border-radius:10px;padding:16px;text-align:center;margin-top:10px;color:#7a5b00;font-weight:600;}
+
+  /* grade de leitos */
+  details.jump{margin-top:14px;border:1px solid var(--borda);border-radius:10px;padding:0 12px;}
+  details.jump summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--azul-hmp);padding:11px 0;list-style:none;}
+  details.jump summary::-webkit-details-marker{display:none;}
+  details.jump summary:before{content:"▸ ";}
+  details.jump[open] summary:before{content:"▾ ";}
+  .lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(46px,1fr));gap:6px;padding:4px 0 14px;}
+  .lg{border:1.5px solid var(--borda);background:#fff;border-radius:8px;padding:9px 0;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:var(--cinza-txt);position:relative;min-height:40px;}
+  .lg.cur{border-color:var(--azul-hmp);background:var(--azul-claro);color:var(--azul-hmp);}
+  .lg.ok{background:var(--verde-re);border-color:var(--verde-re);color:#fff;}
+  .lg.nc{background:var(--verde-re);border-color:var(--vermelho);color:#fff;box-shadow:inset 0 0 0 2px var(--vermelho);}
+  .lg.and{border-color:var(--azul-medio);color:var(--azul-medio);}
+  .lg.vago{background:#FFF3D0;border-color:#E8D08A;color:#9a7a10;}
+
+  .setor-done{background:var(--verde-claro);border:1px solid var(--verde-re);border-radius:12px;padding:18px 16px;text-align:center;margin-top:12px;}
+  .setor-done .big{font-size:16px;font-weight:800;color:var(--verde-re);margin-bottom:4px;}
+  .setor-done .sub{font-size:13px;color:#3d5c22;margin-bottom:14px;}
+  .setor-done .dbtns{display:flex;flex-direction:column;gap:8px;}
+
+  .hint{font-size:12.5px;color:var(--cinza-txt);background:#FAFBFD;border:1px dashed var(--borda);border-radius:10px;padding:11px 13px;margin-top:12px;line-height:1.55;}
+  .legenda{font-size:12px;color:var(--cinza-txt);margin-top:10px;line-height:1.7;} .legenda b{color:#1a1a1a;}
+
+  /* painel */
+  .ronda-scroll{overflow-x:auto;border:1px solid var(--borda);border-radius:10px;-webkit-overflow-scrolling:touch;}
+  table.pt{border-collapse:collapse;width:100%;font-size:12px;min-width:520px;}
+  table.pt th,table.pt td{border:1px solid var(--borda);padding:6px 7px;text-align:center;}
+  table.pt thead th{background:var(--azul-claro);color:var(--azul-hmp);font-size:11px;text-transform:uppercase;}
+  table.pt td.l{font-weight:700;color:var(--azul-hmp);background:#F5F8FC;}
+  .cC{color:var(--verde-re);font-weight:800;} .cNC{color:var(--vermelho);font-weight:800;} .cNA{color:var(--cinza-na);}
+  .nclist{list-style:none;padding:0;margin:8px 0 0;}
+  .nclist li{border-left:3px solid var(--vermelho);background:#FFF7F7;border-radius:0 8px 8px 0;padding:8px 11px;margin-bottom:7px;font-size:13px;}
+  .nclist li b{color:var(--vermelho);}
+  .u3tabs{display:flex;gap:6px;overflow-x:auto;margin:4px 0 10px;-webkit-overflow-scrolling:touch;}
+  .u3tab{flex:0 0 auto;border:1px solid var(--borda);background:#fff;color:var(--cinza-txt);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .u3tab.active{background:var(--azul-medio);border-color:var(--azul-medio);color:#fff;}
+  .u3panel{display:none;} .u3panel.active{display:block;}
+  .u3panel h4{margin:6px 0 8px;color:var(--azul-hmp);font-size:13px;}
+  table.pt td:empty{background:#FCFDFE;}
+  tr.rowvago td{background:#FFFBF0;}
+  .totais{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:13px;margin-top:10px;padding:11px 13px;background:#F5F8FC;border:1px solid var(--borda);border-radius:10px;}
+  .totais b{color:var(--azul-hmp);}
+  .seg{display:flex;background:#E7EDF5;border-radius:10px;padding:4px;margin-top:12px;}
+  .seg-b{flex:1;border:none;background:transparent;color:var(--cinza-txt);border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:44px;}
+  .seg-b.active{background:#fff;color:var(--azul-hmp);box-shadow:0 1px 3px rgba(31,78,121,.15);}
+  .mini{display:inline-flex;gap:3px;}
+  .mopt{border:1.3px solid var(--borda);background:#fff;border-radius:6px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--cinza-txt);min-width:34px;min-height:34px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .mopt.sc{background:var(--verde-re);border-color:var(--verde-re);color:#fff;}
+  .mopt.snc{background:var(--vermelho);border-color:var(--vermelho);color:#fff;}
+  table.a3edit td .obsin{width:100%;min-width:130px;border:1px solid var(--borda);border-radius:6px;padding:5px 6px;font-size:12px;font-family:inherit;}
+  /* painel consolidado */
+  .cons-hero{background:linear-gradient(140deg,var(--azul-hmp) 0%,var(--azul-medio) 100%);color:#fff;border:none;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .gauges{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+  .gauge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:13px;padding:15px 10px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .gauge .g-num{font-size:31px;font-weight:800;line-height:1;letter-spacing:-.5px;}
+  .gauge .g-lbl{font-size:12px;font-weight:700;margin-top:6px;opacity:.96;}
+  .gauge .g-src{font-size:10.5px;opacity:.82;margin-top:3px;}
+  .gauge.bom{background:rgba(197,224,180,.22);border-color:rgba(197,224,180,.6);} .gauge.bom .g-num{color:#E4F5D6;}
+  .gauge.ruim{background:rgba(248,215,213,.18);border-color:rgba(248,215,213,.55);} .gauge.ruim .g-num{color:#FFDBD8;}
+  .cover{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:13px;font-size:12px;opacity:.95;border-top:1px solid rgba(255,255,255,.2);padding-top:11px;}
+  .cover b{font-size:13px;}
+  .nc-cards{display:flex;flex-direction:column;gap:9px;}
+  .nc-card{border:1px solid var(--borda);border-left:3px solid var(--vermelho);border-radius:0 10px 10px 0;padding:10px 12px;background:#FFFCFC;break-inside:avoid;}
+  .nc-h{font-weight:800;color:var(--vermelho);font-size:13px;margin-bottom:2px;}
+  .nc-tag{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--cinza-txt);font-weight:700;margin-top:6px;}
+  .nc-ul{margin:3px 0 0;padding-left:18px;font-size:13px;} .nc-ul li{margin-bottom:2px;}
+  .nc-dims{font-size:13px;font-weight:600;color:#8a1a1a;}
+  .nc-obs{color:var(--cinza-txt);font-size:12px;}
+  table.cmp{width:100%;min-width:0;table-layout:fixed;} table.cmp td,table.cmp th{padding:8px 6px;}
+  table.cmp th:first-child,table.cmp td:first-child{width:40%;}
+  table.cmp .subn{font-size:10px;color:var(--cinza-txt);font-weight:600;margin-top:1px;}
+
+  .actionbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--borda);padding:10px 12px;z-index:30;box-shadow:0 -3px 12px rgba(0,0,0,.08);}
+  .actionbar .inner{max-width:920px;margin:0 auto;display:flex;gap:9px;justify-content:flex-end;align-items:center;}
+  .btn-pdf{background:var(--azul-hmp);color:#fff;} .btn-pdf:hover{background:var(--azul-medio);}
+  .btn-clear{background:#fff;color:var(--vermelho);border:1.5px solid var(--vermelho);}
+  .saved-flag{font-size:11px;color:var(--verde-re);margin-right:auto;font-weight:600;opacity:0;transition:opacity .3s;}
+  .saved-flag.show{opacity:1;}
+
+  footer.inst-foot{text-align:center;font-size:11px;color:var(--cinza-txt);margin-top:16px;padding:8px;}
+
+  @media (max-width:560px){
+    .id-grid{grid-template-columns:1fr;} .valida{grid-template-columns:1fr;}
+    .tabs .tab{flex:1 1 calc(50% - 3px);}
+  }
+  @media print{
+    :root{--bg:#fff;}
+    @page{size:A4;margin:11mm;}
+    body{background:#fff;font-size:10.5px;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .wrap{max-width:100%;padding:0;}
+    .tabs,.actionbar,.leito-nav,details.jump,.setor-chips,.vago-row,.hint,.seg,.no-print{display:none !important;}
+    .leito-ctx{position:static;box-shadow:none;}
+    /* POP */
+    body.print-doc .page{display:none !important;} body.print-doc #page-1{display:block !important;}
+    /* Painel do Anexo I */
+    body.print-a1 .page{display:none !important;} body.print-a1 #page-2{display:block !important;}
+    body.print-a1 #a1-visita{display:none !important;} body.print-a1 #a1-painel{display:block !important;}
+    /* Anexo III (ficha + painel, todas as unidades) */
+    body.print-a3 .page{display:none !important;} body.print-a3 #page-3{display:block !important;}
+    body.print-a3 #a3-ficha,body.print-a3 #a3-painel{display:block !important;}
+    body.print-a3 .u3panel{display:block !important;} body.print-a3 .u3tabs{display:none !important;}
+    /* Painel Consolidado */
+    body.print-cons .page{display:none !important;} body.print-cons #page-4{display:block !important;}
+    .card{box-shadow:none;break-inside:avoid;page-break-inside:avoid;border-color:#bbb;}
+    .card.doc{break-inside:auto !important;page-break-inside:auto !important;}
+    .doc h2,.doc h3,.card h3{page-break-after:avoid;}
+    .doc-table{page-break-inside:auto;}
+    table.pt{min-width:0;font-size:9px;} .ronda-scroll{overflow:visible;border:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="inst"><div class="inst-in">
+  <div class="inst-top">
+    <div class="brand">Hospital Memorial de Pernambuco &nbsp;·&nbsp; HMP
+      <small>Cuidar com amor <span class="heart">♥</span> · Gestão da Qualidade Assistencial — Diretoria de Operações</small></div>
+    <div class="selo"><b>POP-HMP-QUAL-001</b><br>Versão 1.0 · Aprovação 01/07/2026<br>Vigência até 01/07/2028</div>
+  </div>
+  <h1>Visita de Qualidade à Beira do Leito</h1>
+  <p class="subtitle">Round de monitoramento da qualidade assistencial e da experiência do paciente</p>
+</div></header>
+
+<div class="wrap">
+  <nav class="tabs">
+    <button class="tab" id="tab-1" onclick="go(1)"><span class="stepno">1</span>Procedimento</button>
+    <button class="tab active" id="tab-2" onclick="go(2)"><span class="stepno">2</span>Anexo I</button>
+    <button class="tab" id="tab-3" onclick="go(3)"><span class="stepno">3</span>Anexo III</button>
+    <button class="tab" id="tab-4" onclick="go(4)"><span class="stepno">4</span>Consolidado</button>
+  </nav>
+
+  <!-- ===== PAGINA 1: PROCEDIMENTO ===== -->
+  <section class="page" id="page-1">
+    <div class="card doc">
+      <h2>1. Objetivo</h2>
+      <p>Estabelecer a sistemática para a realização da Visita de Qualidade à Beira do Leito no Hospital Memorial de Pernambuco (HMP), por meio de checklist padronizado aplicado diariamente nos leitos de internação, com o propósito de monitorar a qualidade percebida e a conformidade dos serviços de Enfermagem, Higienização, Nutrição/Alimentação, Segurança do Paciente, Atendimento Médico e Atendimento Multiprofissional, verificando inclusive se as demandas do paciente estão sendo atendidas pela equipe médica e pela equipe multiprofissional, identificar não conformidades em tempo real, direcionar ações corretivas e produzir indicadores de melhoria contínua, em alinhamento aos requisitos de acreditação ONA e às diretrizes do Núcleo de Segurança do Paciente (NSP).</p>
+      <h2>2. Abrangência</h2>
+      <p>Aplica-se a todos os leitos de internação das unidades: SRAG (leitos 01 a 29), Neuroclínica (40 leitos), UTI (10 leitos), Bloco Cirúrgico (05 leitos) e Clínica Médica (20 leitos), totalizando 104 leitos. Envolve as equipes de Enfermagem, Higienização/Limpeza e Serviço de Nutrição e Dietética (SND), além do Agente de Qualidade Assistencial responsável pela aplicação do instrumento.</p>
+      <h2>3. Definições</h2>
+      <ul>
+        <li><b>Visita de Qualidade à Beira do Leito:</b> inspeção sistemática e diária realizada junto ao leito, combinando observação direta e percepção do paciente/acompanhante.</li>
+        <li><b>Agente de Qualidade Assistencial:</b> profissional designado para aplicar o checklist; não integra as equipes avaliadas, garantindo imparcialidade.</li>
+        <li><b>Checklist padronizado (Anexo I):</b> instrumento único de verificação por leito.</li>
+        <li><b>Conforme (C):</b> o item atende ao padrão esperado.</li>
+        <li><b>Não Conforme (NC):</b> o item não atende ao padrão esperado.</li>
+        <li><b>Não Aplicável (N.A.):</b> o item não se aplica à condição do leito/paciente no momento.</li>
+        <li><b>Não conformidade:</b> desvio identificado que requer registro, encaminhamento e tratamento.</li>
+        <li><b>ONA:</b> Organização Nacional de Acreditação. <b>NSP:</b> Núcleo de Segurança do Paciente.</li>
+      </ul>
+      <h2>4. Responsabilidades</h2>
+      <table class="doc-table"><thead><tr><th style="width:34%">Função</th><th>Responsabilidades</th></tr></thead><tbody>
+        <tr><td class="k">Agente de Qualidade Assistencial</td><td>Aplicar o checklist diariamente em todos os leitos ocupados; registrar achados; acionar imediatamente o setor responsável; consolidar e lançar indicadores no painel (Anexo II).</td></tr>
+        <tr><td class="k">Diretoria de Operações</td><td>Supervisionar o processo; analisar indicadores; prover recursos; validar planos de ação e cobrar a resolução das não conformidades.</td></tr>
+        <tr><td class="k">Coordenação de Enfermagem</td><td>Tratar as não conformidades do bloco Enfermagem dentro do prazo estabelecido.</td></tr>
+        <tr><td class="k">Coordenação de Higienização</td><td>Tratar as não conformidades do bloco Higienização/Limpeza.</td></tr>
+        <tr><td class="k">Serviço de Nutrição e Dietética (SND)</td><td>Tratar as não conformidades do bloco Nutrição/Alimentação.</td></tr>
+        <tr><td class="k">Diretoria Médica / Corpo Clínico</td><td>Garantir a visita/avaliação médica dos pacientes e tratar as não conformidades do atendimento médico, assegurando que as demandas clínicas sejam atendidas.</td></tr>
+        <tr><td class="k">Equipe Multiprofissional</td><td>Realizar as avaliações conforme necessidade e tratar as não conformidades do atendimento multiprofissional (fisioterapia, nutrição clínica, psicologia, fonoaudiologia, serviço social, farmácia clínica).</td></tr>
+        <tr><td class="k">Núcleo de Segurança do Paciente (NSP)</td><td>Receber e analisar as não conformidades de segurança; integrar aos indicadores institucionais.</td></tr>
+        <tr><td class="k">Diretoria-Presidência</td><td>Aprovar e patrocinar institucionalmente o processo.</td></tr>
+      </tbody></table>
+      <h2>5. Materiais, Sistemas e Recursos</h2>
+      <ul><li>Checklist padronizado impresso (Anexo I) ou versão digital equivalente.</li><li>Prancheta e/ou dispositivo móvel para registro.</li><li>Crachá funcional de identificação do agente.</li><li>Álcool em gel e EPIs conforme o tipo de precaução (especialmente na SRAG).</li><li>Sistema SoulMV (consulta do censo, leitos ocupados e prescrição de dieta).</li><li>Planilha/painel de indicadores (Anexo II).</li></ul>
+      <h2>6. Procedimento Operacional</h2>
+      <ol>
+        <li><b>Planejamento diário:</b> consultar o censo no SoulMV e identificar os leitos ocupados a serem visitados.</li>
+        <li><b>Definição do roteiro:</b> iniciar pela SRAG (observando a precaução respiratória e a paramentação exigida), seguir para a Neuroclínica, Clínica Médica, Bloco Cirúrgico e, por fim, a UTI.</li>
+        <li><b>Abordagem:</b> identificar-se ao paciente/acompanhante, explicar o objetivo da visita, assegurar a privacidade e obter anuência verbal.</li>
+        <li><b>Aplicação do checklist:</b> percorrer os blocos A a D, assinalando C, NC ou N.A. para cada item, com base em observação direta e na percepção do paciente.</li>
+        <li><b>Registro de não conformidades:</b> descrever objetivamente o desvio; registrar evidência fotográfica quando pertinente, sem expor a identidade do paciente.</li>
+        <li><b>Acionamento imediato:</b> comunicar o setor responsável sobre não conformidades que exijam correção imediata e registrar o encaminhamento.</li>
+        <li><b>Encerramento:</b> agradecer ao paciente e registrar o horário da visita.</li>
+        <li><b>Consolidação:</b> ao final do turno, lançar os dados no painel de indicadores (Anexo II) e calcular as taxas de conformidade.</li>
+        <li><b>Tratamento e follow-up:</b> acompanhar a resolução das não conformidades até o fechamento e reverificar na visita seguinte.</li>
+        <li><b>Frequência:</b> diária, em todos os leitos ocupados; leitos com NC são reavaliados prioritariamente na visita subsequente.</li>
+      </ol>
+      <h2>7. Cuidados e Controles</h2>
+      <ul><li><b>Precaução/isolamento:</b> na SRAG, realizar a paramentação conforme protocolo da CCIH antes de adentrar o leito.</li><li><b>Sigilo e LGPD:</b> não expor dados pessoais ou de saúde do paciente; eventuais fotos não devem permitir identificação.</li><li><b>Imparcialidade:</b> o agente não deve pertencer à equipe avaliada no leito.</li><li>Não interromper procedimentos assistenciais em andamento; aguardar oportunidade adequada.</li><li><b>Padronização:</b> utilizar exclusivamente o instrumento vigente (Anexo I), na versão aprovada.</li></ul>
+      <h2>8. Indicadores de Monitoramento</h2>
+      <table class="doc-table"><thead><tr><th>Indicador</th><th>Definição / Fórmula</th><th>Meta</th><th>Periodicidade</th></tr></thead><tbody>
+        <tr><td class="k">Taxa de Conformidade Geral</td><td>(Σ itens Conformes ÷ Σ itens aplicáveis) × 100</td><td>≥ 90%</td><td>Mensal</td></tr>
+        <tr><td class="k">Conformidade por bloco</td><td>Mesma fórmula aplicada a cada bloco (A–D)</td><td>≥ 90%</td><td>Mensal</td></tr>
+        <tr><td class="k">Cobertura de leitos visitados</td><td>(Leitos visitados ÷ leitos ocupados) × 100</td><td>100%</td><td>Diário</td></tr>
+        <tr><td class="k">Não conformidades por setor</td><td>Contagem de NC por SRAG / Neuro / Clínica</td><td>—</td><td>Mensal</td></tr>
+        <tr><td class="k">Tempo médio de resolução de NC</td><td>Média do intervalo entre registro e fechamento</td><td>≤ 48h</td><td>Mensal</td></tr>
+        <tr><td class="k">Reincidência de não conformidade</td><td>NC repetidas no mesmo leito/setor</td><td>Tendência ↓</td><td>Mensal</td></tr>
+      </tbody></table>
+      <h2>9. Controle de Registros — Anexos</h2>
+      <table class="doc-table"><thead><tr><th>Registro</th><th>Responsável</th><th>Local / Forma</th><th>Retenção</th></tr></thead><tbody>
+        <tr><td class="k">Anexo I — Checklist preenchido</td><td>Agente de Qualidade</td><td>Pasta Qualidade / SoulMV (digitalizado)</td><td>5 anos</td></tr>
+        <tr><td class="k">Anexo II — Painel mensal de indicadores</td><td>Agente / Operações</td><td>Google Drive — Qualidade</td><td>5 anos</td></tr>
+        <tr><td class="k">Anexo III — Ficha consolidada de ronda</td><td>Agente de Qualidade</td><td>Pasta Qualidade / SoulMV (digitalizado)</td><td>5 anos</td></tr>
+        <tr><td class="k">Plano de ação de não conformidade</td><td>Setor responsável</td><td>Pasta Qualidade</td><td>5 anos</td></tr>
+      </tbody></table>
+      <p><b>Anexos:</b> Anexo I — Checklist Padronizado (verificação detalhada por leito); Anexo II — Painel Mensal de Indicadores; Anexo III — Ficha Consolidada de Ronda (conformidade por leito).</p>
+      <h2>10. Treinamento</h2>
+      <ul><li>Capacitação inicial do Agente de Qualidade: aplicação do instrumento, técnica de abordagem, LGPD e precauções de isolamento.</li><li>Reciclagem anual e sempre que houver revisão do POP ou do checklist.</li><li>Integração das equipes avaliadas (todos os setores) quanto à finalidade e ao fluxo do processo.</li></ul>
+      <h2>11. Referências</h2>
+      <ul><li>Manual das Organizações Prestadoras de Serviços de Saúde — ONA.</li><li>RDC ANVISA nº 36/2013 — Segurança do Paciente em serviços de saúde.</li><li>Protocolos básicos de segurança do paciente — PNSP/Ministério da Saúde.</li><li>Política e Regimento do Núcleo de Segurança do Paciente — HMP.</li><li>Regimento Interno do HMP — Edição 2026.</li><li>Lei nº 13.709/2018 — Lei Geral de Proteção de Dados (LGPD).</li></ul>
+      <h2>Validação e Aprovação</h2>
+      <div class="valida">
+        <div class="vbox"><div class="role">Elaboração</div><div class="nome">Setor de Qualidade Assistencial</div><div class="cargo">Agente de Qualidade Assistencial</div></div>
+        <div class="vbox"><div class="role">Análise e Validação</div><div class="nome">Willemberg Gomes</div><div class="cargo">Diretor de Operações</div></div>
+        <div class="vbox"><div class="role">Aprovação</div><div class="nome">Sidney Souza Araújo Ribeiro</div><div class="cargo">Diretor-Presidente</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGINA 2: ANEXO I (VISITA LEITO A LEITO + PAINEL) ===== -->
+  <section class="page active" id="page-2">
+    <div class="seg"><button class="seg-b active" id="a1seg-v" onclick="showA1('v')">Visita leito a leito</button><button class="seg-b" id="a1seg-p" onclick="showA1('p')">Painel do Anexo I</button></div>
+
+    <div id="a1-visita">
+      <div class="card">
+        <h2>Dados da Ronda</h2>
+        <div class="id-grid">
+          <div class="field"><label for="r-data">Data</label><input id="r-data" type="date" onchange="setHeader('data',this.value)"></div>
+          <div class="field"><label for="r-turno">Turno</label><select id="r-turno" onchange="setHeader('turno',this.value)"><option value="">Selecione…</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+          <div class="field"><label for="r-agente">Agente de Qualidade</label><input id="r-agente" type="text" placeholder="Nome do agente" onchange="setHeader('agente',this.value)" oninput="setHeader('agente',this.value)"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Setores da Ronda &nbsp;<span id="ronda-total" style="font-size:12px;color:var(--cinza-txt);font-weight:600"></span></h2>
+        <div class="setor-chips" id="setor-chips"></div>
+        <div class="hint">Toque em um setor para iniciar. A visita segue <b>leito a leito</b>: preencha o leito, toque em <b>Concluir e ir para o próximo</b> e o sistema avança sozinho. Ao terminar o setor, ele indica o próximo. Tudo é salvo automaticamente a cada toque.</div>
+      </div>
+
+      <div id="leito-area"></div>
+    </div>
+
+    <div id="a1-painel" style="display:none"></div>
+  </section>
+
+  <!-- ===== PAGINA 3: ANEXO III (FICHA EDITÁVEL + PAINEL) ===== -->
+  <section class="page" id="page-3">
+    <div class="seg"><button class="seg-b active" id="a3seg-f" onclick="showA3('f')">Ficha (checklist)</button><button class="seg-b" id="a3seg-p" onclick="showA3('p')">Painel do Anexo III</button></div>
+    <div id="a3-ficha"></div>
+    <div id="a3-painel" style="display:none"></div>
+  </section>
+
+  <!-- ===== PAGINA 4: PAINEL CONSOLIDADO ===== -->
+  <section class="page" id="page-4">
+    <div id="cons-area"></div>
+  </section>
+
+  <footer class="inst-foot">HMP — Hospital Memorial de Pernambuco &nbsp;·&nbsp; POP-HMP-QUAL-001 &nbsp;·&nbsp; Retenção dos registros: 5 anos (Pasta Qualidade / SoulMV)</footer>
+</div>
+
+<div class="actionbar no-print"><div class="inner">
+  <span class="saved-flag" id="saved">✓ salvo</span>
+  <button class="btn btn-clear" onclick="limpar()">Limpar ronda</button>
+  <button class="btn btn-pdf" id="btn-export" onclick="exportarAtual()">Exportar Painel I (PDF)</button>
+</div></div>
+
+<script>
+/* ================= DADOS ESTRUTURAIS ================= */
+const SETORES=[
+  {id:"srag",nome:"SRAG",n:29},
+  {id:"neuro",nome:"Neuroclínica",n:40},
+  {id:"clinica",nome:"Clínica Médica",n:20},
+  {id:"bc",nome:"Bloco Cirúrgico",n:5},
+  {id:"uti",nome:"UTI",n:10}
+];
+const BLOCOS=[
+ {letra:"A",dim:"Enferm.",titulo:"Enfermagem / Assistência",itens:[
+  "Paciente identificado com pulseira (nome completo + 2º identificador)",
+  "Equipe de enfermagem identificada (crachá) e apresentou-se ao paciente",
+  "Campainha / dispositivo de chamada ao alcance e funcionando",
+  "Tempo de resposta ao chamado referido como adequado pelo paciente",
+  "Medicação administrada nos horários e devidamente orientada",
+  "Avaliação e manejo da dor realizados",
+  "Risco de queda avaliado, sinalizado e com medidas preventivas adotadas",
+  "Risco de lesão por pressão avaliado / mudança de decúbito realizada",
+  "Acesso venoso identificado, datado e em boas condições",
+  "Paciente/acompanhante orientado sobre o plano de cuidado",
+  "Privacidade preservada durante a assistência"]},
+ {letra:"B",dim:"Higien.",titulo:"Higienização / Limpeza",itens:[
+  "Quarto/box limpo, organizado e sem sujidade visível",
+  "Banheiro limpo, sem odor e com insumos (papel higiênico, sabonete)",
+  "Roupa de cama limpa e trocada conforme rotina",
+  "Resíduos segregados corretamente (comum/infectante) e sem transbordamento",
+  "Dispensador de álcool em gel abastecido e funcionante",
+  "Piso seco e livre de risco de queda",
+  "Frequência de limpeza referida como adequada pelo paciente"]},
+ {letra:"C",dim:"Aliment.",titulo:"Nutrição / Alimentação",itens:[
+  "Refeições servidas nos horários estabelecidos",
+  "Temperatura dos alimentos adequada",
+  "Dieta servida conforme prescrição / restrição (consistência, tipo)",
+  "Utensílios e bandeja em boas condições de higiene",
+  "Acesso a água disponível ao paciente",
+  "Paciente orientado quanto a jejum, quando aplicável",
+  "Qualidade e satisfação com a alimentação referidas como adequadas"]},
+ {letra:"D",dim:"Segur.",titulo:"Segurança do Paciente / Estrutura",itens:[
+  "Grades do leito elevadas quando indicado",
+  "Leito travado e em condições de uso",
+  "Identificação do leito/box correta e legível",
+  "Sinalização de precaução/isolamento presente quando aplicável (SRAG)",
+  "EPIs disponíveis no leito em situações de precaução",
+  "Ponto de gases / oxigênio funcionando, quando aplicável"]},
+ {letra:"E",dim:"Médica",titulo:"Atendimento Médico",itens:[
+  "Paciente recebeu visita/avaliação da equipe médica no período",
+  "Demandas e dúvidas clínicas do paciente atendidas pela equipe médica",
+  "Plano terapêutico/conduta comunicado ao paciente e/ou família",
+  "Evolução médica registrada no prontuário (SoulMV)"]},
+ {letra:"F",dim:"Multi",titulo:"Atendimento Multiprofissional",itens:[
+  "Paciente avaliado pela equipe multiprofissional conforme necessidade (fisioterapia, nutrição, psicologia, fonoaudiologia, serviço social, farmácia clínica)",
+  "Demandas multiprofissionais do paciente atendidas",
+  "Orientações da equipe multiprofissional fornecidas ao paciente/família",
+  "Registros multiprofissionais lançados no prontuário"]}
+];
+/* lista plana de itens: gidx -> {letra,dim,texto,blocoIni} */
+const ITENS=[]; const BLOCO_INICIO={};
+(function(){let g=0;BLOCOS.forEach(b=>{BLOCO_INICIO[g]=b;b.itens.forEach(t=>{ITENS.push({g:g,letra:b.letra,dim:b.dim,texto:t});g++;});});})();
+const TOTAL_ITENS=ITENS.length; // 39
+const TOTAL_LEITOS=SETORES.reduce((a,s)=>a+s.n,0); // 104
+
+/* ================= ESTADO ================= */
+const KEY="pop_qual001_ronda_v3";
+let DADOS={header:{data:"",turno:"",agente:""},leitos:{},a3:{marks:{},obs:{}},ui:{setor:"",leito:0}};
+
+function chave(setor,leito){return setor+"_"+String(leito).padStart(2,"0");}
+function ensure(k){if(!DADOS.leitos[k])DADOS.leitos[k]={ocupado:true,itens:{},obs:{},encam:"",concluido:false};return DADOS.leitos[k];}
+function getSetor(id){return SETORES.find(s=>s.id===id);}
+function nomeSetor(id){const s=getSetor(id);return s?s.nome:"";}
+
+/* ================= PERSISTENCIA ================= */
+let ft=null;
+function salvar(){try{localStorage.setItem(KEY,JSON.stringify(DADOS));}catch(e){}
+  const f=document.getElementById("saved");f.classList.add("show");clearTimeout(ft);ft=setTimeout(()=>f.classList.remove("show"),1200);}
+function carregar(){let d=null;try{d=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+  if(d&&d.header){DADOS=d;DADOS.ui=DADOS.ui||{setor:"",leito:0};DADOS.leitos=DADOS.leitos||{};DADOS.a3=DADOS.a3||{marks:{},obs:{}};DADOS.a3.marks=DADOS.a3.marks||{};DADOS.a3.obs=DADOS.a3.obs||{};}}
+
+/* ================= HEADER ================= */
+function setHeader(k,v){DADOS.header[k]=v;salvar();}
+
+/* ================= STATUS DO LEITO ================= */
+function statusLeito(setor,leito){
+  const k=chave(setor,leito),l=DADOS.leitos[k];
+  if(!l)return"pend";
+  if(l.ocupado===false)return"vago";
+  const tem=Object.keys(l.itens).length>0;
+  if(l.concluido)return temNC(l)?"nc":"ok";
+  return tem?"and":"pend";
+}
+function temNC(l){return Object.values(l.itens).some(v=>v==="NC");}
+function statsLeito(l){let c=0,nc=0,na=0;for(let i=0;i<TOTAL_ITENS;i++){const v=l.itens[i];if(v==="C")c++;else if(v==="NC")nc++;else if(v==="NA")na++;}
+  const ap=c+nc,resp=c+nc+na,pct=ap>0?Math.round(c/ap*1000)/10:null;return{c,nc,na,ap,resp,pct};}
+function progressoSetor(id){const s=getSetor(id);let done=0;for(let i=1;i<=s.n;i++){const st=statusLeito(id,i);if(st==="ok"||st==="nc"||st==="vago")done++;}return{done,total:s.n};}
+function setorCompleto(id){const p=progressoSetor(id);return p.done===p.total;}
+function rondaCompleta(){return SETORES.every(s=>setorCompleto(s.id));}
+
+/* ================= NAVEGACAO PAGINAS ================= */
+function go(n){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+n).classList.add("active");
+  [1,2,3,4].forEach(i=>document.getElementById("tab-"+i).classList.toggle("active",i===n));
+  const LBL={1:"Exportar POP (PDF)",2:"Exportar Painel I (PDF)",3:"Exportar Anexo III (PDF)",4:"Exportar Consolidado (PDF)"};
+  const be=document.getElementById("btn-export");if(be)be.textContent=LBL[n];
+  if(n===3)showA3('f');
+  if(n===4)renderConsolidado();
+  window.scrollTo({top:0,behavior:"smooth"});}
+
+/* ---- alternadores de modo ---- */
+function showA1(m){
+  document.getElementById("a1-visita").style.display=(m==='v')?'block':'none';
+  document.getElementById("a1-painel").style.display=(m==='p')?'block':'none';
+  document.getElementById("a1seg-v").classList.toggle("active",m==='v');
+  document.getElementById("a1seg-p").classList.toggle("active",m==='p');
+  if(m==='p')renderPainelA1();
+}
+function showA3(m){
+  document.getElementById("a3-ficha").style.display=(m==='f')?'block':'none';
+  document.getElementById("a3-painel").style.display=(m==='p')?'block':'none';
+  document.getElementById("a3seg-f").classList.toggle("active",m==='f');
+  document.getElementById("a3seg-p").classList.toggle("active",m==='p');
+  if(m==='f')renderA3Ficha(); else renderPainelA3();
+}
+
+/* ================= CHIPS DE SETOR ================= */
+function renderChips(){
+  const box=document.getElementById("setor-chips");box.innerHTML="";
+  let totalDone=0;
+  SETORES.forEach(s=>{
+    const p=progressoSetor(s.id);totalDone+=p.done;
+    const done=p.done===p.total;
+    const el=document.createElement("div");
+    el.className="schip"+(DADOS.ui.setor===s.id?" active":"")+(done?" done":"");
+    el.onclick=()=>selectSetor(s.id);
+    el.innerHTML=`<div><div class="snome">${s.nome}</div><div class="sprog">${done?"concluído":"em aberto"}</div></div>
+      <div class="sbadge">${p.done}/${p.total}</div>`;
+    box.appendChild(el);
+  });
+  document.getElementById("ronda-total").textContent="· "+totalDone+"/"+TOTAL_LEITOS+" leitos";
+}
+
+/* ================= FLUXO LEITO ================= */
+function rolarParaLeito(){const a=document.getElementById('leito-area');if(!a)return;const y=a.getBoundingClientRect().top+window.scrollY-8;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}
+function rolarParaItem(g){const ref=document.getElementById('obs-'+g)||document.querySelector(`.opt[data-g="${g}"]`);const it=ref?ref.closest('.item'):null;if(it)it.scrollIntoView({behavior:'smooth',block:'start'});}
+function selectSetor(id){
+  DADOS.ui.setor=id;
+  DADOS.ui.leito=proximoPendente(id,0)||1;
+  salvar();renderChips();renderLeito();
+  rolarParaLeito();
+}
+function proximoPendente(setor,depois){
+  const s=getSetor(setor);
+  for(let i=depois+1;i<=s.n;i++){const st=statusLeito(setor,i);if(st==="pend"||st==="and")return i;}
+  for(let i=1;i<=depois;i++){const st=statusLeito(setor,i);if(st==="pend"||st==="and")return i;}
+  return null;
+}
+function renderLeito(){
+  const area=document.getElementById("leito-area");
+  const setor=DADOS.ui.setor;
+  if(!setor){area.innerHTML="";return;}
+  const s=getSetor(setor),leito=DADOS.ui.leito,k=chave(setor,leito),l=ensure(k);
+  const p=progressoSetor(setor);
+  const ln=String(leito).padStart(2,"0");
+  const st=statsLeito(l);
+
+  let itensHtml="";
+  BLOCOS.forEach(b=>{
+    itensHtml+=`<div class="card"><h2><span class="blocktag">${b.letra}</span> ${b.titulo}</h2>`;
+    b.itens.forEach((t,bi)=>{
+      const g=ITENS.findIndex(x=>x.texto===t);
+      const v=l.itens[g]||null;
+      itensHtml+=`<div class="item">
+        <span class="item-txt"><span class="n">${g+1}.</span>${t}</span>
+        <div class="opts">
+          <span class="opt ${v==='C'?'sel-c':''}" data-g="${g}" data-v="C" onclick="mark(${g},'C')">C</span>
+          <span class="opt ${v==='NC'?'sel-nc':''}" data-g="${g}" data-v="NC" onclick="mark(${g},'NC')">NC</span>
+          <span class="opt ${v==='NA'?'sel-na':''}" data-g="${g}" data-v="NA" onclick="mark(${g},'NA')">N.A.</span>
+        </div>
+        <div class="obs ${v==='NC'?'show':''}${v==='NC'&&!((l.obs[g]||'').trim())?' req':''}" id="obs-${g}">
+          <label>Observação / ação — <b>obrigatória para NC</b></label>
+          <input type="text" value="${(l.obs[g]||'').replace(/"/g,'&quot;')}" oninput="setObs(${g},this.value)" placeholder="Descreva o desvio e a ação tomada…">
+        </div></div>`;
+    });
+    itensHtml+=`</div>`;
+  });
+
+  const vago=l.ocupado===false;
+  const ehUltimo=!proximoPendente(setor,leito) && (statusLeito(setor,leito)==="pend"||statusLeito(setor,leito)==="and");
+  const btnNextLabel=proximoPendenteExcetoAtual(setor,leito)!==null?"Concluir e ir para o próximo ▶":"Concluir setor ▶";
+
+  area.innerHTML=`
+    <div class="leito-ctx">
+      <div class="lc-top">
+        <div><div class="lc-setor">${s.nome} · leito ${leito} de ${s.n}</div><div class="lc-leito">Leito ${ln}</div></div>
+        <div class="lc-mini">${p.done}/${p.total}<br>no setor</div>
+      </div>
+      <div class="pbar"><i style="width:${Math.round(p.done/p.total*100)}%"></i></div>
+    </div>
+
+    <div class="card">
+      <div class="vago-row">
+        <label for="vago-${k}">Leito vago / não ocupado (pular checklist)</label>
+        <label class="switch"><input type="checkbox" id="vago-${k}" ${vago?'checked':''} onchange="toggleVago()"><span class="slider"></span></label>
+      </div>
+      ${vago?`<div class="vago-panel">Leito ${ln} marcado como <b>vago</b>. Ele será contabilizado como não ocupado e não entra no cálculo de conformidade.</div>`:`
+      <div class="ldash">
+        <div class="stat"><div class="num" id="ld-ap">${st.ap}</div><div class="lbl">Aplicáveis</div></div>
+        <div class="stat conf"><div class="num" id="ld-c">${st.c}</div><div class="lbl">Conformes</div></div>
+        <div class="stat nc"><div class="num" id="ld-nc">${st.nc}</div><div class="lbl">Não conf.</div></div>
+        <div class="stat pct ${st.pct===null?'':(st.pct>=90?'ok':'nok')}" id="ld-box"><div class="num" id="ld-pct">${st.pct===null?'—':st.pct.toLocaleString('pt-BR')+'%'}</div><div class="lbl">Conf.</div></div>
+      </div>
+      <div style="font-size:11.5px;color:var(--cinza-txt);text-align:center;margin-top:6px" id="ld-falta"></div>`}
+    </div>
+
+    ${vago?'':itensHtml}
+
+    ${vago?'':`<div class="card"><h3 style="margin-top:0">Encaminhamentos / setores acionados (deste leito)</h3>
+      <textarea oninput="setEncam(this.value)" placeholder="Registre encaminhamentos e setores acionados neste leito…">${(l.encam||'').replace(/</g,'&lt;')}</textarea></div>`}
+
+    <div class="leito-nav">
+      <button class="btn btn-prev" ${leito<=1?'disabled':''} onclick="prev()">◀</button>
+      <button class="btn btn-next" onclick="concluir()">${vago?'Confirmar e ir para o próximo ▶':btnNextLabel}</button>
+    </div>
+
+    <details class="jump"><summary>Ir para outro leito de ${s.nome}</summary>
+      <div class="lgrid" id="lgrid"></div>
+    </details>
+  `;
+  renderGrid();
+  if(!vago)atualizaFalta(l);
+}
+function proximoPendenteExcetoAtual(setor,leito){
+  const s=getSetor(setor);
+  for(let i=leito+1;i<=s.n;i++){const st=statusLeito(setor,i);if(st==="pend"||st==="and")return i;}
+  for(let i=1;i<leito;i++){const st=statusLeito(setor,i);if(st==="pend"||st==="and")return i;}
+  return null;
+}
+function renderGrid(){
+  const g=document.getElementById("lgrid");if(!g)return;
+  const setor=DADOS.ui.setor,s=getSetor(setor);g.innerHTML="";
+  for(let i=1;i<=s.n;i++){
+    const st=statusLeito(setor,i);
+    let cls="lg";if(i===DADOS.ui.leito)cls+=" cur";else if(st==="ok")cls+=" ok";else if(st==="nc")cls+=" nc";else if(st==="and")cls+=" and";else if(st==="vago")cls+=" vago";
+    const b=document.createElement("div");b.className=cls;b.textContent=String(i).padStart(2,"0");b.onclick=()=>jump(i);
+    g.appendChild(b);
+  }
+}
+function atualizaFalta(l){
+  const el=document.getElementById("ld-falta");if(!el)return;
+  const st=statsLeito(l),falta=TOTAL_ITENS-st.resp;
+  el.innerHTML=falta>0?`<span style="color:var(--vermelho)">${falta} de ${TOTAL_ITENS} itens ainda não avaliados</span>`:`<b style="color:var(--verde-re)">✓ 39 itens avaliados</b>`;
+}
+
+/* ---- interacao itens ---- */
+function mark(g,v){
+  const k=chave(DADOS.ui.setor,DADOS.ui.leito),l=ensure(k);
+  if(l.itens[g]===v)delete l.itens[g];else l.itens[g]=v;
+  if(l.concluido){l.concluido=false;} // editar reabre o leito
+  // repinta botoes
+  document.querySelectorAll(`.opt[data-g="${g}"]`).forEach(el=>{el.classList.remove("sel-c","sel-nc","sel-na");
+    if(el.dataset.v===l.itens[g])el.classList.add(l.itens[g]==="C"?"sel-c":l.itens[g]==="NC"?"sel-nc":"sel-na");});
+  const obs=document.getElementById("obs-"+g);
+  if(obs){const nc=l.itens[g]==="NC";obs.classList.toggle("show",nc);obs.classList.toggle("req",nc&&!((l.obs[g]||'').trim()));}
+  // atualiza dashboard do leito
+  const st=statsLeito(l);
+  const setEl=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+  setEl("ld-ap",st.ap);setEl("ld-c",st.c);setEl("ld-nc",st.nc);
+  const box=document.getElementById("ld-box"),pct=document.getElementById("ld-pct");
+  if(box){box.classList.remove("ok","nok");if(st.pct!==null){box.classList.add(st.pct>=90?"ok":"nok");pct.textContent=st.pct.toLocaleString('pt-BR')+"%";}else pct.textContent="—";}
+  atualizaFalta(l);renderGrid();derivarA3();salvar();
+}
+function setObs(g,val){const k=chave(DADOS.ui.setor,DADOS.ui.leito),l=ensure(k);l.obs[g]=val;
+  const obs=document.getElementById("obs-"+g);if(obs)obs.classList.toggle("req",l.itens[g]==="NC"&&!val.trim());
+  derivarA3();salvar();}
+function setEncam(val){const k=chave(DADOS.ui.setor,DADOS.ui.leito),l=ensure(k);l.encam=val;salvar();}
+function toggleVago(){
+  const k=chave(DADOS.ui.setor,DADOS.ui.leito),l=ensure(k);
+  l.ocupado=!(l.ocupado===false)?false:true;
+  if(l.ocupado===false){l.concluido=true;} else {l.concluido=false;}
+  derivarA3();salvar();renderLeito();renderChips();
+}
+
+/* ---- navegacao leito ---- */
+function prev(){if(DADOS.ui.leito>1){DADOS.ui.leito--;salvar();renderLeito();rolarParaLeito();}}
+function jump(i){DADOS.ui.leito=i;salvar();renderLeito();rolarParaLeito();}
+function primeiroNaoAvaliado(l){for(let i=0;i<TOTAL_ITENS;i++){if(!l.itens[i])return i;}return null;}
+function ncSemObs(l){for(let i=0;i<TOTAL_ITENS;i++){if(l.itens[i]==="NC"&&!((l.obs[i]||'').trim()))return i;}return null;}
+function concluir(){
+  const setor=DADOS.ui.setor,k=chave(setor,DADOS.ui.leito),l=ensure(k);
+  // TRAVA 100%: leito ocupado só avança com todos os itens preenchidos (C, NC ou N.A.)
+  if(l.ocupado!==false){
+    const stc=statsLeito(l);
+    if(stc.resp<TOTAL_ITENS){
+      const falta=TOTAL_ITENS-stc.resp,g=primeiroNaoAvaliado(l);
+      const el=document.getElementById("ld-falta");
+      if(el)el.innerHTML=`<span style="color:#fff;background:var(--vermelho);padding:6px 11px;border-radius:9px;display:inline-block;font-weight:700;line-height:1.35">Não é possível avançar: faltam <b>${falta}</b> de ${TOTAL_ITENS} itens.<br>Comece pelo <b>item ${g+1}</b> — marque C, NC ou N.A. em todos.</span>`;
+      rolarParaItem(g);
+      const alvo=document.querySelector(`.opt[data-g="${g}"]`);if(alvo){alvo.closest(".item").classList.add("flash");setTimeout(()=>alvo.closest(".item").classList.remove("flash"),1600);}
+      return;
+    }
+    // OBSERVAÇÃO OBRIGATÓRIA: todo item NC precisa de observação
+    const gObs=ncSemObs(l);
+    if(gObs!==null){
+      const el=document.getElementById("ld-falta");
+      if(el)el.innerHTML=`<span style="color:#fff;background:var(--vermelho);padding:6px 11px;border-radius:9px;display:inline-block;font-weight:700;line-height:1.35">Não é possível avançar: o <b>item ${gObs+1}</b> está Não Conforme e precisa de observação.<br>Descreva o desvio e a ação para concluir o leito.</span>`;
+      const box=document.getElementById("obs-"+gObs);
+      if(box){box.classList.add("req");box.closest(".item").classList.add("flash");setTimeout(()=>box.closest(".item").classList.remove("flash"),1600);}
+      rolarParaItem(gObs);
+      const inp=box?box.querySelector("input"):null;
+      if(inp)setTimeout(()=>inp.focus({preventScroll:true}),650);
+      return;
+    }
+  }
+  if(l.ocupado!==false)l.concluido=true;
+  derivarA3();
+  salvar();renderChips();
+  const prox=proximoPendenteExcetoAtual(setor,DADOS.ui.leito);
+  if(prox!==null){DADOS.ui.leito=prox;salvar();renderLeito();rolarParaLeito();}
+  else{renderSetorDone(setor);}
+}
+function renderSetorDone(setor){
+  const s=getSetor(setor);
+  const idx=SETORES.findIndex(x=>x.id===setor);
+  const prox=SETORES[idx+1];
+  const area=document.getElementById("leito-area");
+  let botoes="";
+  if(prox&&!setorCompleto(prox.id))botoes+=`<button class="btn btn-next" onclick="selectSetor('${prox.id}')">Iniciar ${prox.nome} ▶</button>`;
+  botoes+=`<button class="btn btn-ghost" onclick="selectSetor('${setor}')">Revisar leitos de ${s.nome}</button>`;
+  if(rondaCompleta())botoes=`<button class="btn btn-next plain" onclick="go(3)">Ver Anexo III (ficha consolidada) ▶</button>`+botoes;
+  else botoes+=`<button class="btn btn-ghost" onclick="go(3)">Ver Anexo III (parcial)</button>`;
+  area.innerHTML=`<div class="setor-done">
+    <div class="big">✓ Setor ${s.nome} concluído</div>
+    <div class="sub">${s.n} leitos processados. ${rondaCompleta()?'Todos os setores foram concluídos — a ronda está completa!':'Você pode seguir para o próximo setor.'}</div>
+    <div class="dbtns">${botoes}</div>
+  </div>`;
+  renderChips();
+  area.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+const DIMS3=[["enf","Enferm."],["hig","Higien."],["ali","Aliment."],["seg","Segur."],["med","Médica"],["mul","Multi"]];
+const CRITERIOS=`<div class="legenda" style="margin-top:0">
+  <b>Enferm.</b> (Enfermagem): assistência, identificação do paciente, manejo da dor, prevenção de quedas e de lesão por pressão, acesso venoso, orientação ao paciente.<br>
+  <b>Higien.</b> (Higienização): limpeza do quarto/banheiro, troca de roupa de cama, segregação de resíduos, insumos e álcool em gel.<br>
+  <b>Aliment.</b> (Alimentação): refeições nos horários, temperatura, dieta conforme prescrição, higiene de utensílios, acesso a água.<br>
+  <b>Segur.</b> (Segurança do Paciente): grades, leito travado, identificação do leito, sinalização de isolamento, EPIs, gases/oxigênio.<br>
+  <b>Médica</b> (Atendimento Médico): visita/avaliação médica realizada e demandas clínicas do paciente atendidas.<br>
+  <b>Multi</b> (Atendimento Multiprofissional): avaliação e demandas atendidas pela equipe multiprofissional (fisioterapia, nutrição, psicologia, fonoaudiologia, serviço social, farmácia clínica).<br>
+  <b>Legenda:</b> C = Conforme · NC = Não Conforme.
+</div>`;
+function cabecalhoRonda(){return `<div class="id-grid">
+  <div class="field"><label>Data</label><div style="padding:8px 0;font-weight:600">${DADOS.header.data?formatarData(DADOS.header.data):'—'}</div></div>
+  <div class="field"><label>Turno</label><div style="padding:8px 0;font-weight:600">${DADOS.header.turno||'—'}</div></div>
+  <div class="field"><label>Agente</label><div style="padding:8px 0;font-weight:600">${DADOS.header.agente||'—'}</div></div>
+</div>`;}
+function pctBox(pct,lbl){return `<div class="stat pct ${pct===null?'':(pct>=90?'ok':'nok')}"><div class="num">${pct===null?'—':pct.toLocaleString('pt-BR')+'%'}</div><div class="lbl">${lbl}</div></div>`;}
+
+/* ===== INTERLIGAÇÃO ANEXO I → ANEXO III (regra de 90%) =====
+   Cada dimensão do leito recebe C se sua conformidade for ≥ 90%, e NC se ficar
+   abaixo de 90%. Só leitos ocupados e concluídos (100% preenchidos) são derivados. */
+function derivarA3(){
+  DADOS.a3={marks:{},obs:{}};
+  SETORES.forEach(s=>{
+    for(let i=1;i<=s.n;i++){
+      const ln=String(i).padStart(2,"0"),k=chave(s.id,i),l=DADOS.leitos[k];
+      if(!l||l.ocupado===false||!l.concluido)continue;
+      const obsParts=[];
+      BLOCOS.forEach((b,bi)=>{
+        let c=0,nc=0;
+        for(let g=0;g<TOTAL_ITENS;g++){if(ITENS[g].dim!==b.dim)continue;const v=l.itens[g];
+          if(v==="C")c++;else if(v==="NC"){nc++;if(l.obs[g])obsParts.push(l.obs[g]);}}
+        const ap=c+nc;if(ap===0)return; // dimensão sem itens aplicáveis (todos N.A.) → em branco
+        const pct=c/ap*100;
+        DADOS.a3.marks[`${s.id}_${ln}_${DIMS3[bi][0]}`]=(pct>=90)?"C":"NC";
+      });
+      if(l.encam)obsParts.push(l.encam);
+      if(obsParts.length)DADOS.a3.obs[`${s.id}_${ln}`]=obsParts.join(" · ");
+    }
+  });
+}
+
+/* ================= PAINEL DO ANEXO I (por item) ================= */
+function renderPainelA1(){
+  const area=document.getElementById("a1-painel");
+  let tC=0,tNC=0,tNA=0,leitosAval=0;
+  const blocoAgg={};BLOCOS.forEach(b=>blocoAgg[b.letra]={c:0,nc:0,titulo:b.titulo});
+  const setAgg={};SETORES.forEach(s=>setAgg[s.id]={nome:s.nome,n:s.n,c:0,nc:0,aval:0});
+  const linhas=[],ncs=[],encs=[];
+  SETORES.forEach(s=>{
+    for(let i=1;i<=s.n;i++){
+      const st=statusLeito(s.id,i),k=chave(s.id,i),l=DADOS.leitos[k];
+      if(st==="pend"||st==="vago")continue;
+      leitosAval++;let lc=0,lnc=0,lna=0;
+      BLOCOS.forEach(b=>{for(let g=0;g<TOTAL_ITENS;g++){if(ITENS[g].dim!==b.dim)continue;const v=l.itens[g];
+        if(v==="C"){lc++;tC++;blocoAgg[b.letra].c++;}else if(v==="NC"){lnc++;tNC++;blocoAgg[b.letra].nc++;}else if(v==="NA"){lna++;tNA++;}}});
+      const ap=lc+lnc,pct=ap>0?Math.round(lc/ap*1000)/10:null;
+      setAgg[s.id].aval++;setAgg[s.id].c+=lc;setAgg[s.id].nc+=lnc;
+      linhas.push({setor:s.nome,leito:String(i).padStart(2,"0"),ap,c:lc,nc:lnc,na:lna,pct});
+      for(let g=0;g<TOTAL_ITENS;g++){if(l.itens[g]==="NC")ncs.push({setor:s.nome,leito:String(i).padStart(2,"0"),item:ITENS[g].texto,obs:l.obs[g]||""});}
+      if(l.encam)encs.push({setor:s.nome,leito:String(i).padStart(2,"0"),txt:l.encam});
+    }
+  });
+  const tAp=tC+tNC,tPct=tAp>0?Math.round(tC/tAp*1000)/10:null;
+
+  let html=`<div class="card"><h2>Painel do Anexo I — Conformidade por item</h2>
+    <p class="legenda" style="margin-top:0">Consolida os itens do checklist de todos os leitos avaliados. <b>Cálculo por item</b> (Σ itens conformes ÷ Σ itens aplicáveis). Itens N.A. não entram no cálculo.</p>
+    ${cabecalhoRonda()}
+    <div class="ldash" style="margin-top:10px">
+      <div class="stat"><div class="num">${tAp}</div><div class="lbl">Itens aplicáveis</div></div>
+      <div class="stat conf"><div class="num">${tC}</div><div class="lbl">Conformes</div></div>
+      <div class="stat nc"><div class="num">${tNC}</div><div class="lbl">Nº de NC</div></div>
+      ${pctBox(tPct,"% Conformidade")}
+    </div>
+    <div class="totais"><span><b>Leitos avaliados:</b> ${leitosAval}</span><span><b>Itens N.A.:</b> ${tNA}</span><span><b>Meta:</b> ≥ 90%</span></div>
+  </div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por setor (por item)</h3>
+    <p class="legenda" style="margin-top:0;margin-bottom:8px">Percentual de conformidade de cada setor, calculado sobre os itens dos seus leitos avaliados.</p>
+    <table class="pt cmp"><thead><tr><th style="text-align:left">Setor</th><th>Leitos aval.</th><th>% Conformidade</th></tr></thead><tbody>`;
+  SETORES.forEach(s=>{const a=setAgg[s.id],ap=a.c+a.nc,pct=ap>0?Math.round(a.c/ap*1000)/10:null;
+    html+=`<tr><td class="l" style="text-align:left">${a.nome}</td><td>${a.aval}/${a.n}</td><td class="${pct===null?'':(pct>=90?'cC':'cNC')}">${pct===null?'—':pct.toLocaleString('pt-BR')+'%'}<div class="subn">${a.c} conf · ${a.nc} NC</div></td></tr>`;});
+  html+=`</tbody></table></div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por bloco (A–F)</h3><div class="ronda-scroll"><table class="pt"><thead><tr><th style="text-align:left">Bloco</th><th>Conformes</th><th>NC</th><th>% Conf.</th></tr></thead><tbody>`;
+  BLOCOS.forEach(b=>{const a=blocoAgg[b.letra],ap=a.c+a.nc,pct=ap>0?Math.round(a.c/ap*1000)/10:null;
+    html+=`<tr><td class="l" style="text-align:left">${b.letra} · ${b.titulo}</td><td class="cC">${a.c}</td><td class="cNC">${a.nc}</td><td class="${pct===null?'':(pct>=90?'cC':'cNC')}">${pct===null?'—':pct.toLocaleString('pt-BR')+'%'}</td></tr>`;});
+  html+=`</tbody></table></div></div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por leito</h3>`;
+  if(linhas.length===0)html+=`<div class="hint" style="margin-top:0">Nenhum leito avaliado ainda. Preencha o checklist na aba “Visita leito a leito”.</div>`;
+  else{html+=`<div class="ronda-scroll"><table class="pt"><thead><tr><th>Setor</th><th>Leito</th><th>Aplic.</th><th>Conf.</th><th>NC</th><th>% Conf.</th></tr></thead><tbody>`;
+    linhas.forEach(li=>{html+=`<tr><td class="l">${li.setor}</td><td class="l">${li.leito}</td><td>${li.ap}</td><td class="cC">${li.c}</td><td class="cNC">${li.nc}</td><td class="${li.pct===null?'':(li.pct>=90?'cC':'cNC')}">${li.pct===null?'—':li.pct.toLocaleString('pt-BR')+'%'}</td></tr>`;});
+    html+=`</tbody></table></div></div>`;}
+
+  if(encs.length){html+=`<div class="card"><h3 style="margin-top:0">Encaminhamentos / setores acionados</h3><ul class="nclist" style="">`;
+    encs.forEach(e=>html+=`<li style="border-left-color:var(--azul-medio);background:#F2F7FC"><b>${e.setor} · Leito ${e.leito}</b> — ${e.txt.replace(/</g,'&lt;')}</li>`);html+=`</ul></div>`;}
+
+  html+=`<div class="card"><h3 style="margin-top:0">Não conformidades por item (${ncs.length})</h3>`;
+  if(ncs.length===0)html+=`<div class="hint" style="margin-top:0">Nenhuma não conformidade registrada.</div>`;
+  else{html+=`<ul class="nclist">`;ncs.forEach(x=>html+=`<li><b>${x.setor} · Leito ${x.leito}</b> — ${x.item}${x.obs?` <br><span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g,'&lt;')}</span>`:''}</li>`);html+=`</ul>`;}
+  html+=`</div>`;
+  area.innerHTML=html;
+}
+
+/* ================= ANEXO III — FICHA (ESPELHO AUTOMÁTICO DO ANEXO I) ================= */
+function renderA3Ficha(){
+  derivarA3();
+  const area=document.getElementById("a3-ficha");
+  const tabelas={};
+  SETORES.forEach(s=>{
+    let rows="";
+    for(let i=1;i<=s.n;i++){
+      const ln=String(i).padStart(2,"0"),k=chave(s.id,i),l=DADOS.leitos[k];
+      const vago=l&&l.ocupado===false;
+      if(vago){rows+=`<tr class="rowvago"><td class="l">${ln}</td>${DIMS3.map(()=>'<td class="cNA">—</td>').join('')}<td class="obscell" style="text-align:left">Leito vago</td></tr>`;continue;}
+      let cells="";
+      DIMS3.forEach(dm=>{const v=DADOS.a3.marks[`${s.id}_${ln}_${dm[0]}`]||null;
+        cells+=`<td class="${v==='C'?'cC':v==='NC'?'cNC':'cNA'}">${v||''}</td>`;});
+      const ob=(DADOS.a3.obs[`${s.id}_${ln}`]||'').replace(/</g,'&lt;');
+      rows+=`<tr><td class="l">${ln}</td>${cells}<td class="obscell" style="text-align:left">${ob}</td></tr>`;
+    }
+    tabelas[s.id]=`<div class="ronda-scroll"><table class="pt a3"><thead><tr><th>Leito</th>${DIMS3.map(d=>`<th>${d[1]}</th>`).join('')}<th style="text-align:left">Observações (se NC)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  });
+
+  let html=`<div class="card"><h2>Anexo III — Ficha Consolidada de Ronda</h2>
+    ${cabecalhoRonda()}
+    <p class="legenda" style="margin-top:8px"><b>Preenchimento automático (interligado ao Anexo I):</b> cada dimensão recebe <b class="cC">C</b> quando sua conformidade é <b>≥ 90%</b> e <b class="cNC">NC</b> quando fica <b>abaixo de 90%</b> — a meta de conformidade por bloco. Aparecem preenchidos apenas os leitos ocupados e <b>concluídos</b> no Anexo I. Não é necessário digitar nada aqui.</p>
+  </div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por leito</h3>
+    <div class="u3tabs">${SETORES.map((s,i)=>`<button class="u3tab${i===0?' active':''}" id="u3t-${s.id}" onclick="showU3('${s.id}')">${s.nome}</button>`).join('')}</div>
+    ${SETORES.map((s,i)=>`<div class="u3panel${i===0?' active':''}" id="u3p-${s.id}"><h4>${s.nome} · leitos 01 a ${String(s.n).padStart(2,'0')}</h4>${tabelas[s.id]}</div>`).join('')}
+  </div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Critérios das dimensões</h3>${CRITERIOS}</div>`;
+  area.innerHTML=html;
+}
+
+/* ================= PAINEL DO ANEXO III (por leito) ================= */
+function renderPainelA3(){
+  const area=document.getElementById("a3-painel");
+  let visit=0,conf=0,naoconf=0;const ncs=[];const tabelas={};
+  derivarA3();
+  SETORES.forEach(s=>{
+    let rows="",sVisit=0,sConf=0,sNao=0;
+    for(let i=1;i<=s.n;i++){
+      const ln=String(i).padStart(2,"0");let any=false,anyNC=false,cells="";
+      DIMS3.forEach(dm=>{const v=DADOS.a3.marks[`${s.id}_${ln}_${dm[0]}`]||null;if(v)any=true;if(v==="NC"){anyNC=true;ncs.push({setor:s.nome,leito:ln,dim:dm[1],obs:DADOS.a3.obs[`${s.id}_${ln}`]||""});}
+        cells+=`<td class="${v==='C'?'cC':v==='NC'?'cNC':'cNA'}">${v||''}</td>`;});
+      if(!any){rows+=`<tr><td class="l">${ln}</td>${cells}<td></td></tr>`;continue;}
+      visit++;sVisit++;const status=anyNC?"NC":"C";if(anyNC){naoconf++;sNao++;}else{conf++;sConf++;}
+      const ob=(DADOS.a3.obs[`${s.id}_${ln}`]||'').replace(/</g,'&lt;');
+      rows+=`<tr><td class="l">${ln}</td>${cells}<td style="text-align:left">${ob}</td></tr>`;
+    }
+    tabelas[s.id]={html:`<div class="ronda-scroll"><table class="pt"><thead><tr><th>Leito</th>${DIMS3.map(d=>`<th>${d[1]}</th>`).join('')}<th style="text-align:left">Observações</th></tr></thead><tbody>${rows}</tbody></table></div>`,sVisit,sConf,sNao};
+  });
+  const pct=visit>0?Math.round(conf/visit*1000)/10:null;
+
+  let html=`<div class="card"><h2>Painel do Anexo III — Conformidade por leito</h2>
+    <p class="legenda" style="margin-top:0">Gerado automaticamente a partir do Anexo I. <b>Cálculo por leito</b>: o leito é <b class="cC">Conforme</b> quando todas as dimensões atingem <b>≥ 90%</b>; é <b class="cNC">Não Conforme</b> quando ao menos uma dimensão fica <b>abaixo de 90%</b>.</p>
+    ${cabecalhoRonda()}
+    <div class="ldash" style="margin-top:10px">
+      <div class="stat"><div class="num">${visit}</div><div class="lbl">Leitos visitados</div></div>
+      <div class="stat conf"><div class="num">${conf}</div><div class="lbl">Conformes</div></div>
+      <div class="stat nc"><div class="num">${naoconf}</div><div class="lbl">Não conformes</div></div>
+      ${pctBox(pct,"% Conformidade")}
+    </div>
+    <div class="totais"><span><b>Total de leitos:</b> ${TOTAL_LEITOS}</span><span><b>Visitados:</b> ${visit}</span><span><b>Conformes:</b> ${conf}</span><span><b>Não conformes:</b> ${naoconf}</span><span><b>Meta:</b> ≥ 90%</span></div>
+  </div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por setor (por leito)</h3>
+    <p class="legenda" style="margin-top:0;margin-bottom:8px">Percentual de conformidade de cada setor, calculado sobre os leitos visitados na ficha.</p>
+    <table class="pt cmp"><thead><tr><th style="text-align:left">Setor</th><th>Visitados</th><th>% Conformidade</th></tr></thead><tbody>`;
+  SETORES.forEach(s=>{const t=tabelas[s.id],p=t.sVisit>0?Math.round(t.sConf/t.sVisit*1000)/10:null;
+    html+=`<tr><td class="l" style="text-align:left">${s.nome}</td><td>${t.sVisit}/${s.n}</td><td class="${p===null?'':(p>=90?'cC':'cNC')}">${p===null?'—':p.toLocaleString('pt-BR')+'%'}<div class="subn">${t.sConf} conf · ${t.sNao} NC</div></td></tr>`;});
+  html+=`</tbody></table></div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Detalhe por leito</h3>
+    <div class="u3tabs">${SETORES.map((s,i)=>`<button class="u3tab${i===0?' active':''}" id="p3t-${s.id}" onclick="showP3('${s.id}')">${s.nome}</button>`).join('')}</div>
+    ${SETORES.map((s,i)=>{const t=tabelas[s.id],p=t.sVisit>0?Math.round(t.sConf/t.sVisit*1000)/10:null;return `<div class="u3panel p3p${i===0?' active':''}" id="p3p-${s.id}"><h4>${s.nome} · ${p===null?'sem leitos visitados':`<span class="${p>=90?'cC':'cNC'}">${p.toLocaleString('pt-BR')}% conforme</span> · visitados ${t.sVisit} · conf. ${t.sConf} · não conf. ${t.sNao}`}</h4>${t.html}</div>`;}).join('')}
+  </div>`;
+
+  html+=`<div class="card"><h3 style="margin-top:0">Não conformidades por dimensão (${ncs.length})</h3>`;
+  if(ncs.length===0)html+=`<div class="hint" style="margin-top:0">Nenhuma não conformidade registrada na ficha.</div>`;
+  else{html+=`<ul class="nclist">`;ncs.forEach(x=>html+=`<li><b>${x.setor} · Leito ${x.leito}</b> — ${x.dim}${x.obs?` <br><span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g,'&lt;')}</span>`:''}</li>`);html+=`</ul>`;}
+  html+=`</div>`;
+  html+=`<div class="card"><h3 style="margin-top:0">Critérios das dimensões</h3>${CRITERIOS}</div>`;
+  area.innerHTML=html;
+}
+
+function showU3(id){document.querySelectorAll(".u3panel:not(.p3p)").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".u3tab").forEach(t=>{if(t.id.startsWith("u3t-"))t.classList.remove("active");});
+  const p=document.getElementById("u3p-"+id),t=document.getElementById("u3t-"+id);if(p)p.classList.add("active");if(t)t.classList.add("active");}
+function showP3(id){document.querySelectorAll(".p3p").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".u3tab").forEach(t=>{if(t.id.startsWith("p3t-"))t.classList.remove("active");});
+  const p=document.getElementById("p3p-"+id),t=document.getElementById("p3t-"+id);if(p)p.classList.add("active");if(t)t.classList.add("active");}
+function formatarData(iso){const p=iso.split("-");return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:iso;}
+
+/* ================= PAINEL CONSOLIDADO (Anexo I + Anexo III) ================= */
+function renderConsolidado(){
+  const area=document.getElementById("cons-area");
+  derivarA3();
+  // ---- Anexo I (por item) ----
+  let itC=0,itNC=0,itNA=0,avalI=0,vago=0,pend=0;
+  const dimI={};BLOCOS.forEach(b=>dimI[b.dim]={c:0,nc:0});
+  const setI={};SETORES.forEach(s=>setI[s.id]={c:0,nc:0,aval:0});
+  const ncsI=[];
+  SETORES.forEach(s=>{
+    for(let i=1;i<=s.n;i++){
+      const st=statusLeito(s.id,i),k=chave(s.id,i),l=DADOS.leitos[k];
+      if(st==="vago"){vago++;continue;} if(st==="pend"){pend++;continue;}
+      avalI++;setI[s.id].aval++;
+      BLOCOS.forEach(b=>{for(let g=0;g<TOTAL_ITENS;g++){if(ITENS[g].dim!==b.dim)continue;const v=l.itens[g];
+        if(v==="C"){itC++;dimI[b.dim].c++;setI[s.id].c++;}else if(v==="NC"){itNC++;dimI[b.dim].nc++;setI[s.id].nc++;}else if(v==="NA")itNA++;}});
+      for(let g=0;g<TOTAL_ITENS;g++){if(l.itens[g]==="NC")ncsI.push({setor:s.nome,leito:String(i).padStart(2,"0"),item:ITENS[g].texto,obs:l.obs[g]||""});}
+    }
+  });
+  const itAp=itC+itNC,itPct=itAp>0?Math.round(itC/itAp*1000)/10:null;
+
+  // ---- Anexo III (por leito) ----
+  let leVisit=0,leConf=0,leNao=0;
+  const dimL={};DIMS3.forEach(d=>dimL[d[0]]={c:0,nc:0});
+  const setL={};SETORES.forEach(s=>setL[s.id]={visit:0,conf:0,nao:0});
+  const ncsL=[];
+  SETORES.forEach(s=>{
+    for(let i=1;i<=s.n;i++){
+      const ln=String(i).padStart(2,"0");let any=false,anyNC=false;
+      DIMS3.forEach(d=>{const v=DADOS.a3.marks[`${s.id}_${ln}_${d[0]}`];if(v){any=true;if(v==="C")dimL[d[0]].c++;else if(v==="NC"){dimL[d[0]].nc++;anyNC=true;}}});
+      if(!any)continue;
+      leVisit++;setL[s.id].visit++;
+      if(anyNC){leNao++;setL[s.id].nao++;DIMS3.forEach(d=>{if(DADOS.a3.marks[`${s.id}_${ln}_${d[0]}`]==="NC")ncsL.push({setor:s.nome,leito:ln,dim:d[1],obs:DADOS.a3.obs[`${s.id}_${ln}`]||""});});}
+      else{leConf++;setL[s.id].conf++;}
+    }
+  });
+  const lePct=leVisit>0?Math.round(leConf/leVisit*1000)/10:null;
+  const temI=avalI>0,temL=leVisit>0;
+  const gcls=p=>p===null?'neutro':(p>=90?'bom':'ruim');
+  const pStr=p=>p===null?'—':p.toLocaleString('pt-BR')+'%';
+
+  // ---- HERO ----
+  let html=`<div class="card cons-hero">
+    <h2 style="border:none;color:#fff;margin-bottom:6px">Painel Consolidado da Ronda</h2>
+    <p style="margin:0 0 6px;font-size:12px;opacity:.9">Reúne as duas visões da ronda: a detalhada, <b>por item</b> (Anexo I), e a consolidada, <b>por leito</b> (Anexo III).</p>
+    <p style="margin:0 0 4px;font-size:12.5px;opacity:.9">${DADOS.header.data?formatarData(DADOS.header.data):'Data —'} · ${DADOS.header.turno||'Turno —'} · ${DADOS.header.agente||'Agente —'}</p>
+    <div class="gauges">
+      <div class="gauge ${gcls(itPct)}"><div class="g-num">${pStr(itPct)}</div><div class="g-lbl">Conformidade por item</div><div class="g-src">Anexo I · ${itC}/${itAp} itens</div></div>
+      <div class="gauge ${gcls(lePct)}"><div class="g-num">${pStr(lePct)}</div><div class="g-lbl">Conformidade por leito</div><div class="g-src">Anexo III · ${leConf}/${leVisit} leitos</div></div>
+    </div>
+    <div class="cover">
+      <span><b>${avalI}</b> leitos avaliados (Anexo I)</span>
+      <span><b>${leVisit}</b> na ficha (Anexo III)</span>
+      <span><b>${vago}</b> vagos</span>
+      <span><b>${pend}</b> pendentes</span>
+      <span>de <b>${TOTAL_LEITOS}</b> leitos · meta ≥ 90%</span>
+    </div>
+  </div>`;
+
+  if(!temI && !temL){
+    html+=`<div class="card"><div class="hint" style="margin:0">Ainda não há dados para consolidar. Preencha o <b>Anexo I</b> (visita leito a leito) e/ou o <b>Anexo III</b> (ficha).</div></div>`;
+    area.innerHTML=html;return;
+  }
+
+  // ---- COMPARATIVO POR DIMENSAO ----
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por dimensão</h3>
+    <p class="legenda" style="margin-top:0;margin-bottom:8px">Comparativo entre a visão detalhada (<b>por item</b>, Anexo I) e a consolidada (<b>por leito</b>, Anexo III).</p>
+    <table class="pt cmp"><thead><tr><th style="text-align:left">Dimensão</th><th>Por item</th><th>Por leito</th></tr></thead><tbody>`;
+  BLOCOS.forEach((b,bi)=>{
+    const di=dimI[b.dim],api=di.c+di.nc,pi=api>0?Math.round(di.c/api*1000)/10:null;
+    const dl=dimL[DIMS3[bi][0]],apl=dl.c+dl.nc,pl=apl>0?Math.round(dl.c/apl*1000)/10:null;
+    html+=`<tr><td class="l" style="text-align:left">${DIMS3[bi][1]}</td><td class="${pi===null?'':(pi>=90?'cC':'cNC')}">${pStr(pi)}</td><td class="${pl===null?'':(pl>=90?'cC':'cNC')}">${pStr(pl)}</td></tr>`;
+  });
+  html+=`</tbody></table></div>`;
+
+  // ---- COMPARATIVO POR SETOR ----
+  html+=`<div class="card"><h3 style="margin-top:0">Conformidade por setor</h3><table class="pt cmp"><thead><tr><th style="text-align:left">Setor</th><th>Por item</th><th>Por leito</th></tr></thead><tbody>`;
+  SETORES.forEach(s=>{
+    const i=setI[s.id],api=i.c+i.nc,pi=api>0?Math.round(i.c/api*1000)/10:null;
+    const l=setL[s.id],pl=l.visit>0?Math.round(l.conf/l.visit*1000)/10:null;
+    html+=`<tr><td class="l" style="text-align:left">${s.nome}</td>
+      <td class="${pi===null?'':(pi>=90?'cC':'cNC')}">${pStr(pi)}<div class="subn">${i.aval}/${s.n} leitos</div></td>
+      <td class="${pl===null?'':(pl>=90?'cC':'cNC')}">${pStr(pl)}<div class="subn">${l.visit}/${s.n} leitos</div></td></tr>`;
+  });
+  html+=`</tbody></table></div>`;
+
+  // ---- NCs CONSOLIDADAS POR LEITO ----
+  const mapa={};
+  ncsI.forEach(x=>{const k=x.setor+"|"+x.leito;(mapa[k]=mapa[k]||{setor:x.setor,leito:x.leito,items:[],dims:[]}).items.push(x);});
+  ncsL.forEach(x=>{const k=x.setor+"|"+x.leito;(mapa[k]=mapa[k]||{setor:x.setor,leito:x.leito,items:[],dims:[]}).dims.push(x);});
+  const leitosNC=Object.values(mapa);
+  html+=`<div class="card"><h3 style="margin-top:0">Não conformidades consolidadas ${leitosNC.length?`· ${leitosNC.length} leito(s)`:''}</h3>`;
+  if(leitosNC.length===0)html+=`<div class="hint" style="margin-top:0">Nenhuma não conformidade registrada nos Anexos I e III.</div>`;
+  else{
+    html+=`<div class="nc-cards">`;
+    leitosNC.forEach(x=>{
+      html+=`<div class="nc-card"><div class="nc-h">${x.setor} · Leito ${x.leito}</div>`;
+      if(x.items.length){html+=`<div class="nc-tag">Anexo I · itens</div><ul class="nc-ul">`;x.items.forEach(it=>html+=`<li>${it.item}${it.obs?` <span class="nc-obs">↳ ${it.obs.replace(/</g,'&lt;')}</span>`:''}</li>`);html+=`</ul>`;}
+      if(x.dims.length){const ds=[...new Set(x.dims.map(d=>d.dim))];const ob=x.dims.find(d=>d.obs);html+=`<div class="nc-tag">Anexo III · dimensões</div><div class="nc-dims">${ds.join(' · ')}</div>${ob&&ob.obs?`<div class="nc-obs" style="margin-top:3px">↳ ${ob.obs.replace(/</g,'&lt;')}</div>`:''}`;}
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`</div>`;
+
+  // ---- FONTES / COERENCIA ----
+  html+=`<div class="card"><div class="legenda" style="margin-top:0">
+    <b>Como este painel é montado:</b> os números de <b>“por item”</b> vêm do Anexo I (checklist detalhado dos 39 itens) e os de <b>“por leito”</b> vêm do Anexo III, que é gerado automaticamente do Anexo I: cada dimensão fica <b class="cC">C</b> se sua conformidade é <b>≥ 90%</b> e <b class="cNC">NC</b> se fica abaixo disso. Itens N.A. não entram no cálculo. Meta institucional: <b>≥ 90%</b>.
+  </div></div>`;
+
+  area.innerHTML=html;
+}
+
+/* ================= EXPORTAR (contextual) ================= */
+function exportarAtual(){
+  const ativa=document.querySelector(".page.active").id;
+  if(ativa==="page-1"){document.title="POP-HMP-QUAL-001";document.body.classList.add("print-doc");
+    window.onafterprint=()=>document.body.classList.remove("print-doc");}
+  else if(ativa==="page-2"){showA1('p');renderPainelA1();document.title="POP-HMP-QUAL-001_Painel_Anexo_I";document.body.classList.add("print-a1");
+    window.onafterprint=()=>document.body.classList.remove("print-a1");}
+  else if(ativa==="page-4"){renderConsolidado();document.title="POP-HMP-QUAL-001_Painel_Consolidado";document.body.classList.add("print-cons");
+    window.onafterprint=()=>document.body.classList.remove("print-cons");}
+  else{renderA3Ficha();renderPainelA3();document.getElementById("a3-ficha").style.display="block";document.getElementById("a3-painel").style.display="block";
+    document.title="POP-HMP-QUAL-001_Anexo_III";document.body.classList.add("print-a3");
+    window.onafterprint=()=>{document.body.classList.remove("print-a3");showA3(document.getElementById("a3seg-f").classList.contains("active")?'f':'p');};}
+  setTimeout(()=>window.print(),200);
+}
+function limpar(){
+  if(!confirm("Deseja limpar TODA a ronda (todos os setores e leitos)? Esta ação não pode ser desfeita."))return;
+  try{localStorage.removeItem(KEY);}catch(e){}
+  DADOS={header:{data:"",turno:"",agente:""},leitos:{},a3:{marks:{},obs:{}},ui:{setor:"",leito:0}};
+  document.getElementById("r-data").value="";document.getElementById("r-turno").value="";document.getElementById("r-agente").value="";
+  renderChips();document.getElementById("leito-area").innerHTML="";
+}
+
+/* ================= INIT ================= */
+carregar();
+derivarA3();
+if(DADOS.header.data)document.getElementById("r-data").value=DADOS.header.data;
+if(DADOS.header.turno)document.getElementById("r-turno").value=DADOS.header.turno;
+if(DADOS.header.agente)document.getElementById("r-agente").value=DADOS.header.agente;
+renderChips();
+if(DADOS.ui.setor)renderLeito();
+</script>
+</body>
+</html>
