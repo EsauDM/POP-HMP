@@ -1179,8 +1179,8 @@
             }
 
             /* ========================================================
-     CSS DE IMPRESSÃO (NOVO E OTIMIZADO)
-     ======================================================== */
+             CSS DE IMPRESSÃO (NOVO E OTIMIZADO)
+             ======================================================== */
             @media print {
                 :root {
                     --bg: #fff;
@@ -1913,7 +1913,7 @@
             <footer class="inst-foot">
                 HMP — Hospital Memorial de Pernambuco &nbsp;·&nbsp;
                 POP-HMP-QUAL-001 &nbsp;·&nbsp; Retenção dos registros: 5 anos
-                (Pasta Qualidade / SoulMV)
+                (Pasta Qualidade)
             </footer>
         </div>
 
@@ -1956,9 +1956,10 @@
                         "Avaliação e manejo da dor realizados",
                         "Risco de queda avaliado, sinalizado e com medidas preventivas adotadas",
                         "Risco de lesão por pressão avaliado / mudança de decúbito realizada",
-                        "Acesso venoso identificado, datado e em boas condições",
+                        "Acesso venoso central e outros, identificado, datado e em boas condições",
                         "Paciente/acompanhante orientado sobre o plano de cuidado",
                         "Privacidade preservada durante a assistência",
+                        "Contensão mecânica",
                     ],
                 },
                 {
@@ -1982,7 +1983,7 @@
                     itens: [
                         "Refeições servidas nos horários estabelecidos",
                         "Temperatura dos alimentos adequada",
-                        "Dieta servida conforme prescrição / restrição (consistência, tipo)",
+                        "Dieta (enteral ou interal) servida conforme prescrição / restrição",
                         "Utensílios e bandeja em boas condições de higiene",
                         "Acesso a água disponível ao paciente",
                         "Paciente orientado quanto a jejum, quando aplicável",
@@ -2037,13 +2038,14 @@
                             g: g,
                             letra: b.letra,
                             dim: b.dim,
+                            titulo: b.titulo,
                             texto: t,
                         });
                         g++;
                     });
                 });
             })();
-            const TOTAL_ITENS = ITENS.length; // 39
+            const TOTAL_ITENS = ITENS.length; // 40
             const TOTAL_LEITOS = SETORES.reduce((a, s) => a + s.n, 0); // 104
 
             /* ================= ESTADO ================= */
@@ -2058,6 +2060,7 @@
             function chave(setor, leito) {
                 return setor + "_" + String(leito).padStart(2, "0");
             }
+            
             function ensure(k) {
                 if (!DADOS.leitos[k])
                     DADOS.leitos[k] = {
@@ -2067,9 +2070,11 @@
                         obs: {},
                         encam: "",
                         concluido: false,
+                        preenchido_auto: false // Nova flag adicionada
                     };
                 return DADOS.leitos[k];
             }
+
             function getSetor(id) {
                 return SETORES.find((s) => s.id === id);
             }
@@ -2269,6 +2274,7 @@
                 }
                 return null;
             }
+            
             function renderLeito() {
                 const area = document.getElementById("leito-area");
                 const setor = DADOS.ui.setor;
@@ -2280,6 +2286,24 @@
                     leito = DADOS.ui.leito,
                     k = chave(setor, leito),
                     l = ensure(k);
+
+                // --- INÍCIO DO PRÉ-PREENCHIMENTO AUTOMÁTICO ---
+                if (!l.preenchido_auto) {
+                    // Se o leito for novo (vazio), preenche todos os itens com "C"
+                    if (Object.keys(l.itens).length === 0) {
+                        for (let i = 0; i < TOTAL_ITENS; i++) {
+                            l.itens[i] = "C";
+                        }
+                        // Na UTI, marcar questões de acompanhante/família como NA por padrão
+                        if (s.nome.toUpperCase().includes("UTI")) {
+                            l.itens[9] = "NA"; // Paciente/acompanhante orientado...
+                        }
+                    }
+                    l.preenchido_auto = true;
+                    salvar();
+                }
+                // --- FIM DO PRÉ-PREENCHIMENTO AUTOMÁTICO ---
+
                 const p = progressoSetor(setor);
                 const ln = String(leito).padStart(2, "0");
                 const st = statsLeito(l);
@@ -2331,6 +2355,10 @@
       <div class="pbar"><i style="width:${Math.round((p.done / p.total) * 100)}%"></i></div>
     </div>
 
+    <details class="jump"><summary>Ir para outro leito de ${s.nome}</summary>
+      <div class="lgrid" id="lgrid"></div>
+    </details>
+
     <div class="card">
       <div class="vago-row">
         <label for="vago-${k}">Leito vago / não ocupado (pular checklist)</label>
@@ -2368,10 +2396,6 @@
       <button class="btn btn-prev" ${leito <= 1 ? "disabled" : ""} onclick="prev()">◀</button>
       ${btnNextHTML}
     </div>
-
-    <details class="jump"><summary>Ir para outro leito de ${s.nome}</summary>
-      <div class="lgrid" id="lgrid"></div>
-    </details>
   `;
                 renderGrid();
                 if (!vago && !atend) atualizaFalta(l);
@@ -2675,12 +2699,12 @@
             }
 
             const DIMS3 = [
-                ["enf", "Enferm."],
-                ["hig", "Higien."],
-                ["ali", "Aliment."],
-                ["seg", "Segur."],
-                ["med", "Médica"],
-                ["mul", "Multi"],
+                ["enf", "Enferm.", "Enfermagem / Assistência"],
+                ["hig", "Higien.", "Higienização / Limpeza"],
+                ["ali", "Aliment.", "Nutrição / Alimentação"],
+                ["seg", "Segur.", "Segurança do Paciente / Estrutura"],
+                ["med", "Médica", "Atendimento Médico"],
+                ["mul", "Multi", "Atendimento Multiprofissional"],
             ];
             const CRITERIOS = `<div class="legenda" style="margin-top:0">
   <b>Enferm.</b> (Enfermagem): assistência, identificação do paciente, manejo da dor, prevenção de quedas e de lesão por pressão, acesso venoso, orientação ao paciente.<br>
@@ -2818,6 +2842,7 @@
                                     setor: s.nome,
                                     leito: String(i).padStart(2, "0"),
                                     item: ITENS[g].texto,
+                                    area: ITENS[g].titulo,
                                     obs: l.obs[g] || "",
                                 });
                         }
@@ -2866,12 +2891,15 @@
                 });
                 html += `</tbody></table></div></div>`;
 
-                html += `<div class="card"><h3 style="margin-top:0">Conformidade por leito</h3>`;
-                if (linhas.length === 0)
-                    html += `<div class="hint" style="margin-top:0">Nenhum leito avaliado ainda. Preencha o checklist na aba “Visita leito a leito”.</div>`;
-                else {
+                html += `<div class="card"><h3 style="margin-top:0">Conformidade por leito <span style="font-size:13px; font-weight:normal; color:var(--cinza-txt);">(Apenas com desvios)</span></h3>`;
+                const linhasComNC = linhas.filter((li) => li.nc > 0);
+                if (linhas.length === 0) {
+                    html += `<div class="hint" style="margin-top:0">Nenhum leito avaliado ainda. Preencha o checklist na aba “Visita leito a leito”.</div></div>`;
+                } else if (linhasComNC.length === 0) {
+                    html += `<div class="hint" style="margin-top:0; color:var(--verde-re); font-weight:bold;">Todos os leitos avaliados estão 100% conformes!</div></div>`;
+                } else {
                     html += `<div class="ronda-scroll"><table class="pt"><thead><tr><th>Setor</th><th>Leito</th><th>Aplic.</th><th>Conf.</th><th>NC</th><th>% Conf.</th></tr></thead><tbody>`;
-                    linhas.forEach((li) => {
+                    linhasComNC.forEach((li) => {
                         html += `<tr><td class="l">${li.setor}</td><td class="l">${li.leito}</td><td>${li.ap}</td><td class="cC">${li.c}</td><td class="cNC">${li.nc}</td><td class="${li.pct === null ? "" : li.pct >= 90 ? "cC" : "cNC"}">${li.pct === null ? "—" : li.pct.toLocaleString("pt-BR") + "%"}</td></tr>`;
                     });
                     html += `</tbody></table></div></div>`;
@@ -2904,9 +2932,20 @@
         <h4 style="margin: 0 0 6px 0; color: var(--azul-hmp); font-size: 13.5px; border-bottom: 1px solid var(--borda); padding-bottom: 4px;">Setor: ${setorNome} <span style="color: var(--cinza-txt); font-weight: normal; font-size: 12px;">(${lista.length} NCs)</span></h4>
         <ul class="nclist" style="margin-top: 0;">`;
 
+                        const ncPorArea = {};
                         lista.forEach((x) => {
-                            html += `<li><b>Leito ${x.leito}</b> — ${x.item}${x.obs ? ` <br><span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g, "&lt;")}</span>` : ""}</li>`;
+                            if (!ncPorArea[x.area]) ncPorArea[x.area] = [];
+                            ncPorArea[x.area].push(x);
                         });
+                        for (const [areaNome, ncsDaArea] of Object.entries(ncPorArea)) {
+                            html += `<li><b style="color:var(--azul-hmp);font-size:14px;">[${areaNome}] <span style="color:var(--cinza-txt);font-weight:normal;font-size:12px;">(${ncsDaArea.length} NCs)</span></b><ul style="padding-left: 0; margin-top: 4px; margin-bottom: 0; list-style: none;">`;
+                            ncsDaArea.forEach((x) => {
+                                html += `<li style="border: none; background: transparent; padding: 0 0 6px 0; margin: 0;">
+                                    ${x.item} <span style="color:var(--cinza-txt);font-weight:600;font-size:12px;">(Leito ${x.leito})</span>${x.obs ? ` <br><span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g, "&lt;")}</span>` : ""}
+                                </li>`;
+                            });
+                            html += `</ul></li>`;
+                        }
 
                         html += `</ul></div>`;
                     }
@@ -2990,7 +3029,7 @@
                                 ncs.push({
                                     setor: s.nome,
                                     leito: ln,
-                                    dim: dm[1],
+                                    dim: dm[2],
                                     obs: DADOS.a3.obs[`${s.id}_${ln}`] || "",
                                 });
                             }
@@ -3067,10 +3106,21 @@
                     html += `<div class="hint" style="margin-top:0">Nenhuma não conformidade registrada na ficha.</div>`;
                 else {
                     html += `<ul class="nclist">`;
-                    ncs.forEach(
-                        (x) =>
-                            (html += `<li><b>${x.setor} · Leito ${x.leito}</b> — ${x.dim}${x.obs ? ` <br><span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g, "&lt;")}</span>` : ""}</li>`),
-                    );
+                    const ncPorArea = {};
+                    ncs.forEach((x) => {
+                        const chave = `${x.setor} · [${x.dim}]`;
+                        if (!ncPorArea[chave]) ncPorArea[chave] = [];
+                        ncPorArea[chave].push(x);
+                    });
+                    for (const [setorArea, ncsItem] of Object.entries(ncPorArea)) {
+                        html += `<li><b style="color:var(--azul-hmp);font-size:14px;">${setorArea} <span style="color:var(--cinza-txt);font-weight:normal;font-size:12px;">(${ncsItem.length} NCs)</span></b><ul style="padding-left: 0; margin-top: 4px; margin-bottom: 0; list-style: none;">`;
+                        ncsItem.forEach((x) => {
+                            html += `<li style="border: none; background: transparent; padding: 0 0 6px 0; margin: 0;">
+                                <span style="color:var(--cinza-txt);font-weight:600;font-size:12px;">(Leito ${x.leito})</span>${x.obs ? ` <span style="color:var(--cinza-txt)">↳ ${x.obs.replace(/</g, "&lt;")}</span>` : ""}
+                            </li>`;
+                        });
+                        html += `</ul></li>`;
+                    }
                     html += `</ul>`;
                 }
                 html += `</div>`;
@@ -3159,6 +3209,7 @@
                                     setor: s.nome,
                                     leito: String(i).padStart(2, "0"),
                                     item: ITENS[g].texto,
+                                    area: ITENS[g].titulo,
                                     obs: l.obs[g] || "",
                                 });
                         }
@@ -3209,7 +3260,7 @@
                                     ncsL.push({
                                         setor: s.nome,
                                         leito: ln,
-                                        dim: d[1],
+                                        dim: d[2],
                                         obs:
                                             DADOS.a3.obs[`${s.id}_${ln}`] || "",
                                     });
@@ -3328,7 +3379,7 @@
                             html += `<div class="nc-tag">Anexo I · itens</div><ul class="nc-ul">`;
                             x.items.forEach(
                                 (it) =>
-                                    (html += `<li>${it.item}${it.obs ? ` <span class="nc-obs">↳ ${it.obs.replace(/</g, "&lt;")}</span>` : ""}</li>`),
+                                    (html += `<li><span style="color:var(--azul-hmp);font-weight:600;">[${it.area}]</span> ${it.item}${it.obs ? ` <span class="nc-obs">↳ ${it.obs.replace(/</g, "&lt;")}</span>` : ""}</li>`),
                             );
                             html += `</ul>`;
                         }
